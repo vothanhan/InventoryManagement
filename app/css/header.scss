@@ -1,0 +1,23 @@
+.nav-wrapper{
+	padding-left:1rem;
+	font-size:2rem;
+	background-color:#D4D5D7;
+}
+#header-bar{
+	height:2.8rem;
+}
+#nav-bar{
+	height:100%;
+}
+#header-bar #nav-bar .nav-wrapper .brand-logo{
+	color:#0A0F14!important;
+	font-size:1.6rem;
+	font-weight:bold;
+	height:100%;
+}
+
+#header-bar #nav-bar .nav-wrapper .brand-logo span{
+	top: 0.5rem;
+	line-height: normal;
+	position: absolute;
+}

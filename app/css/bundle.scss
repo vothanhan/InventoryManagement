@@ -1,0 +1,10 @@
+/*header.scss*/
+@import 'header';
+/*sidebar.scss*/
+@import 'sidebar';
+@import 'content';
+html, body {
+	margin: 0;
+	height: 100%;
+}
+

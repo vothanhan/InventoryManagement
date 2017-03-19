@@ -1,0 +1,12 @@
+{
+	"name": "inventorymanagement",
+	"version": "1.0.0",
+	"dependencies": {
+		"font-awesome": "latest",
+		"bootstrap": "latest",
+		"animate.css": "latest",
+		"angular": "latest",
+		"angular-ui-router": "latest",
+		"materialize": "latest"
+	}
+}
