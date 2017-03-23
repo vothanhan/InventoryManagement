@@ -1,5 +1,3 @@
-var Product= require('./models/product.js');
-
 module.exports = function(app){
 	//server routes ==========
 	//handle api call
@@ -7,5 +5,4 @@ module.exports = function(app){
 	app.get('/',function(req,res){
 		res.sendFile(__dirname+'/view/index.html');
 	});
-
 };

@@ -6,6 +6,8 @@ var methodOverride = require('method-override');
 var mongoose=require('mongoose');
 const fs=require('fs');
 
+mongoose.Promise=global.Promise;
+
 // Configuration =============
 var db = require('./config/db.js');
 
@@ -48,7 +50,14 @@ app.use(express.static(__dirname+'/libs'))
 app.use(express.static(__dirname+'/public'))
 
 // route =============
+var router=express.Router();
 require('./app/routes')(app);
+require('./app/api/product')(router);
+require('./app/api/supplier')(router);
+require('./app/api/order')(router);
+require('./app/api/user')(router);
+
+app.use(router);
 
 
 
