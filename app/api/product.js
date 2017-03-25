@@ -14,7 +14,6 @@ module.exports = function(exrouter){
 	}).post(function(req,res){
 		tmp= new Product();
 		tmp.name=req.body.name;
-		//console.log(req.body);
 		tmp.price=parseInt(req.body.price);
 		tmp.itemType=req.body.itemType;
 		var response={}
@@ -22,7 +21,7 @@ module.exports = function(exrouter){
 			if(err){
 				response={"error":true,"data":err};
 			}
-			else response={"error":false,"data":"Success"}
+			else response={"error":false,"data":tmp}
 			res.json(response);
 		});
 	})

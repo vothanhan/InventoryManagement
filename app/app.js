@@ -1,6 +1,9 @@
 angular = require('angular');
-app = angular.module('inventorymanage',[]);
+app = angular.module('inventorymanage',['ui.router']);
 
-//require('./controllers/index.js');
+domain='localhost:3000';
+
+require('./routes/index.js');
+require('./controllers/index.js');
 require('./directives/index.js');
-//require('./services/index.js');
+require('./factories/index.js');

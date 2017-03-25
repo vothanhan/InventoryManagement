@@ -3,8 +3,21 @@
 	padding-top:1rem;
 	height:100%;
 	float:left;
+	background:#314363;
 }
 
-#sidebar .sidebar-item{
+.sidebar-item{
 	cursor:pointer;
+}
+.sidebar-item a{
+	color:#FFFFFF!important;
+}
+.sidebar-item.active{
+	background:#0D1424;
+}
+.sidebar-item.active a{
+	color:#618CDC!important;
+}
+.sidebar-item:not(.active):hover{
+	background:#687183!important;
 }

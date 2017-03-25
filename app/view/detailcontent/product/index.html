@@ -1,0 +1,13 @@
+<div id='product-page'>
+	<div>
+		<input type='text' ng-model='name' placeholder="Product name">
+		<input type='number' ng-model='price' placeholder="Price">
+		<input type='text' ng-model='itemType' placeholder="Item type">
+		<button ng-click='addProduct()'>Add</button>
+	</div>
+	<div id='product-list'>
+		<div class='product-listing' ng-repeat='product in products'>
+			<span>{{product.name}}</span>
+		</div>
+	</div>
+</div>
