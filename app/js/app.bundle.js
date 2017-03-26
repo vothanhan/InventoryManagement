@@ -76,16 +76,17 @@ app.controller('productCtrl',['$scope','$rootScope','$http','productFactory',fun
 	$scope.name='';
 	$scope.itemType='';
 	$scope.price='';
-
+	$scope.stock='';
 	init();
 	function init(){
 		getAllProducts();
+		$('.modal').modal();
+
 	};
 
 	function getAllProducts(){
 		productFactory.getAllProducts()
 			.then(function(response){
-				console.log(response);
 				$scope.products=response.data;
 			},function(error){
 				$scope.status='Unable to load products. Message:'+error.message;
@@ -103,9 +104,10 @@ app.controller('productCtrl',['$scope','$rootScope','$http','productFactory',fun
 			});
 		return response;
 	}
-	$scope.deleteProduct = function(id){
+	$scope.deleteProduct = function(id,index){
 		productFactory.deleteProduct(id)
 			.then(function(response){
+				$scope.products.splice(index,1);
 				window.alert('Delete successfully ');
 			},function(error){
 				window.alert('Unable to delete product.\n Error message: '+error.message);
@@ -116,9 +118,10 @@ app.controller('productCtrl',['$scope','$rootScope','$http','productFactory',fun
 		newProduct.name=$scope.name;
 		newProduct.itemType=$scope.itemType;
 		newProduct.price=$scope.price;
+		newProduct.stock=$scope.stock;
 		productFactory.addProduct(newProduct).then(function(response){
-			window.alert('Add '+ $scope.name +' successfully');
 			$scope.products.push(response.data.data);
+			window.alert('Add '+ $scope.name +' successfully');
 			//$scope.products.push(response.data)
 		},function(error){
 			window.alert("Cannot add " + $scope.name+"\nError message: "+error.message);
@@ -193,7 +196,6 @@ app.factory('productFactory',['$http',function($http){
 	};
 
 	productFactory.addProduct = function(product){
-		console.log(product);
 		return $http.post(urlBase,product);
 	};
 

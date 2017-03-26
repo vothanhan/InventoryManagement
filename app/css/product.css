@@ -1,0 +1,55 @@
+.listing-header{
+	margin-bottom:0px!important;
+	font-size:1.2rem;
+	color:white;
+}
+
+.listing-header .cell{
+	text-align:center;
+	border-right:1px solid grey;
+	background:#4AA4D9;
+}
+
+.product-listing:nth-of-type(even) {
+	background:#E0E3E2;
+}
+.product-listing .cell{
+	background:inherit;
+}
+
+.product-listing .cell{
+	border-right:1px solid grey;
+}
+.product-listing .cell:first-child{
+	border-left:1px solid grey;
+}
+.product-listing:first-child .cell{
+	border-top:1px solid grey;
+}
+.product-listing:last-child .cell{
+	border-bottom:1px solid grey;
+}
+
+#addForm{
+	width:50rem;
+	position:absolute;
+	transform:translate(50%,50%);
+	border:1px solid grey;
+	padding:1rem 4rem 1rem 4rem;
+	background:#F2F2F2;
+}
+#addForm input{
+	padding:0px 1rem 0px 0px;
+}
+
+.modal-title{
+	margin:0px -4rem 0px -4rem;
+	padding:0px 0px 1rem 2rem;
+	border-bottom:1px solid gray;
+}
+.addButton{
+	right:2rem;
+}
+.action-bar{
+	margin-bottom:2rem;
+}

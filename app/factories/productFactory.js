@@ -13,7 +13,6 @@ app.factory('productFactory',['$http',function($http){
 	};
 
 	productFactory.addProduct = function(product){
-		console.log(product);
 		return $http.post(urlBase,product);
 	};
 

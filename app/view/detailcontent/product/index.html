@@ -1,13 +1,64 @@
 <div id='product-page'>
-	<div>
-		<input type='text' ng-model='name' placeholder="Product name">
-		<input type='number' ng-model='price' placeholder="Price">
-		<input type='text' ng-model='itemType' placeholder="Item type">
-		<button ng-click='addProduct()'>Add</button>
+	<div id='addForm' class='modal'>
+		<h4 class='modal-title'>ADD PRODUCT</h4>
+		<div class='modal-content'>
+			<div class='input-field'>
+				<input id='product-name' type='text' ng-model='name' >
+				<label for='product-name'>Product name</label>
+			</div>
+			<div class='input-field'>
+				<input id='product-price' type='number' ng-model='price' >
+				<label for='product-price'>Price</label>
+			</div>
+			<div class='input-field'>
+				<input id='product-type' type='text' ng-model='itemType' >
+				<label for='product-type'>Type</label>
+			</div>
+			<div class='input-field'>
+				<input id='product-stock' type='number' ng-model='stock' >
+				<label for='product-stock'>Amount</label>
+			</div>
+			<button style='float:right' ng-click='addProduct()'>Add</button>
+		</div>
 	</div>
+	<div class='row action-bar'>
+		<button data-target="addForm" class='addButton'>Add product</button>
+	</div>
+	
 	<div id='product-list'>
+		<div class='listing-header row'>
+			<div class='col s5 cell'>
+				<span>Name</span>
+			</div>
+			<div class='col s1 cell'>
+				<span>Price</span>
+			</div>
+			<div class='col s2 cell'>
+				<span>Type</span>
+			</div>
+			<div class='col s2 cell'>
+				<span>In stock</span>
+			</div>
+			<div class='col s1 cell'>
+				<span>Action</span>
+			</div>
+		</div>
 		<div class='product-listing' ng-repeat='product in products'>
-			<span>{{product.name}}</span>
+			<div class='col s5 cell'>
+				<span>{{product.name}}</span>
+			</div>
+			<div class='col s1 cell' style='text-align:right'>
+				<span>{{product.price}}</span>
+			</div>
+			<div class='col s2 cell' style='text-align:right'>
+				<span>{{product.itemType}}</span>
+			</div>
+			<div class='col s2 cell' style='text-align:right'>
+				<span>{{product.stock}}</span>
+			</div>
+			<div class='col s1 cell'>
+				<i class="fa fa-times" aria-hidden="true" ng-click='deleteProduct(product._id,$index)'></i>
+			</div>
 		</div>
 	</div>
 </div>

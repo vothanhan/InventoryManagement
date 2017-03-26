@@ -16,14 +16,34 @@ module.exports = function(exrouter){
 		tmp.name=req.body.name;
 		tmp.price=parseInt(req.body.price);
 		tmp.itemType=req.body.itemType;
+		tmp.stock=req.body.stock;
 		var response={}
-		tmp.save(function(err){
+		Product.findOne({'name':tmp.name},function(err,product){
 			if(err){
-				response={"error":true,"data":err};
+				console.log(err);
 			}
-			else response={"error":false,"data":tmp}
-			res.json(response);
-		});
+			else{
+				if(product!=null){
+					product.stock+=tmp.stock;
+					product.save(function(err){
+						if(err){
+							response={"error":true,"data":err};
+						}
+						else response={"error":false,"data":tmp}
+						res.json(response);
+					});
+				}
+				else{
+					tmp.save(function(err){
+						if(err){
+							response={"error":true,"data":err};
+						}
+						else response={"error":false,"data":tmp}
+						res.json(response);
+					});
+				}
+			}
+		})
 	})
 	router.route("/api/items/:id").get(function(req,res){
 		var response={};
