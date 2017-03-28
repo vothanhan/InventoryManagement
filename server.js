@@ -9,14 +9,14 @@ const fs=require('fs');
 mongoose.Promise=global.Promise;
 
 // Configuration =============
-var db = require('./config/db.js');
+//var db = require('./config/db.js');
 
 //set port
 var port = process.env.PORT || 3000
 
 //connect to mongoDB
 
-mongoose.connect(db.url);
+//mongoose.connect(db.url);
 //parse application/json
 app.use(bodyParser.json());
 // parse application/x-www-form-urlencoded
