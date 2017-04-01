@@ -3,7 +3,7 @@
 		<div class='info-title'>
 			<span style='font-size:26px'>{{product.name}}</span>
 
-			<button class='action-button btn remove-btn icon-btn close-btn' >
+			<button class='action-button btn remove-btn icon-btn close-btn' ui-sref='product.list'>
 				<i class="fa fa-times" aria-hidden="true" style='font-size:2rem'></i>
 			</button>
 
@@ -15,37 +15,13 @@
 				Adjust stock
 			</button>
 
-			<button class='action-button btn edit-btn icon-btn waves-effect waves-light'>
+			<button class='action-button btn edit-btn icon-btn waves-effect waves-light' data-target="editProduct">
 				<i class="fa fa-pencil" aria-hidden="true"></i>
 			</button>
 		</div>
-		<div id='adjustStock' class='modal'>
-			<h4 class='modal-title'>ADJUST STOCK</h4>
-			<div class='modal-content' class='row'>
-				<form ng-submit='adjustStock(product._id)' class='col s12'>
-					<div class='row'>
-						<div class='input-field col s12'>
-							<input id='adjust-reason' type='text' ng-model='adjustReason' required>
-							<label for='adjust-name'>Adjust reason</label>
-						</div>
-					</div>
-					<div class='row' >
-						<div class='input-field col s12'>
-							<input id='adjust-amount' type='number' ng-model='stockAdjustAmount' required>
-							<label for='adjust-amount' class='active'>Amount</label>
-						</div>
-					</div>
-					<div class='row'>
-						<div class='input-field col s12' style='position:relative'>
-							<input id='adjust-date' type='date' class='datepicker' required>
-							<label for='adjust-date'>Date</label>
-						</div>
-					</div>
-					<button class='btn word-btn' style='float:right' type='submit'>Add</button>
-				</form>
-			</div>
-		</div>
-		<div class= 'row' style='border-bottom:1px solid #BFAFAF'>
+		<add-adjust></add-adjust>
+		<product-edit></product-edit>
+		<div class= 'row' style='border-bottom:1px solid #BFAFAF;'>
 			<div class='col s12'>
 				<ul class="tabs">
 					<li class="tab col s3" ng-click='selectTabs(0)'><a>Overview</a></li>
@@ -86,8 +62,24 @@
 			</div>
 		</div>
 		<div class='change-history' ng-show="selectTab==1">
-			<div ng-repeat='adjustment in product.changeHistory' class='col s12'>
-				<div class='row'>
+			<div class='title-adjust'>
+				<div class='row' style='margin-bottom:0'>
+					<div class='col s5'>
+						<span>Reason</span>
+					</div>
+					<div class='col s3'>
+						<span>Amount</span>
+					</div>
+					<div class='col s4'>
+						<span>Date</span>
+					</div>
+				</div>
+			</div>
+			<div ng-show="product.changeHistory.length==0" style='text-align:center'>
+				<span>No adjustment yet.</span>
+			</div>
+			<div ng-repeat='adjustment in product.changeHistory'>
+				<div class='row adjust-cell col s12' style='margin-bottom:0;padding-left:0px'>
 					<div class='col s5'>
 						<span>{{adjustment.reason}}</span>
 					</div>

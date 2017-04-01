@@ -1,0 +1,26 @@
+<div id='adjustStock' class='modal'>
+	<h4 class='modal-title'>ADJUST STOCK</h4>
+	<div class='modal-content' class='row'>
+		<form ng-submit='adjustStock(product._id)' class='col s12'>
+			<div class='row'>
+				<div class='input-field col s12'>
+					<input id='adjust-reason' type='text' ng-model='adjustReason' required>
+					<label for='adjust-name'>Adjust reason</label>
+				</div>
+			</div>
+			<div class='row' >
+				<div class='input-field col s12'>
+					<input id='adjust-amount' type='number' ng-model='stockAdjustAmount' required>
+					<label for='adjust-amount' class='active'>Amount</label>
+				</div>
+			</div>
+			<div class='row'>
+				<div class='input-field col s12' style='position:relative'>
+					<input id='adjust-date' type='date' class='datepicker' required>
+					<label for='adjust-date'>Date</label>
+				</div>
+			</div>
+			<button class='btn word-btn' style='float:right' type='submit'>Add</button>
+		</form>
+	</div>
+</div>

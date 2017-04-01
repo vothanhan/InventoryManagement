@@ -6,3 +6,5 @@ require("./sidebar");
 require("./detailcontent");
 require("./uiSrefActiveIf");
 require("./addProduct");
+require("./addAdjust");
+require("./productEdit");

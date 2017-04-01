@@ -3,11 +3,11 @@
 	font-size:1.2rem;
 	color:#263035;
 	border-top:1px solid #ededed;
+	background:#f7f7f7;
 	border-bottom:1px solid #ededed;
 }
 
 .listing-header .cell{
-	background:#f7f7f7;
 	padding:0.5rem 0 0.5rem 0;
 }
 
@@ -91,6 +91,21 @@
 .tabs .indicator{
 	background-color:#2FA3E6 !important;
 }
+
 li.tab a{
 	color:#2FA3E6 !important;
+}
+
+.title-adjust{
+	background-color:#ededed;
+	margin-top:-20px;
+	padding:0.6rem 0 0.6rem 0;
+}
+.adjust-cell{
+	border-bottom:1px solid #E0E0E0;
+}
+
+#editProduct{
+	padding:1rem 4rem 1rem 4rem;
+	max-height: 85%;
 }

@@ -15,18 +15,21 @@ __webpack_require__(9);
 "use strict";
 
 
-__webpack_require__(13);
-__webpack_require__(11);
 __webpack_require__(14);
 __webpack_require__(12);
-__webpack_require__(15);
+__webpack_require__(16);
+__webpack_require__(13);
+__webpack_require__(17);
+__webpack_require__(11);
 __webpack_require__(10);
+__webpack_require__(15);
+
 
 /***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(16);
+__webpack_require__(18);
 
 /***/ }),
 /* 4 */
@@ -107,6 +110,12 @@ app.controller('productCtrl',['$scope','$rootScope','$state','$http','productFac
 	$scope.unit='';
 	$scope.changeHistory=[];
 	$scope.sellHistory=[];
+
+	$scope.sort={
+		field:'name',
+		reverse:false
+	}
+
 	init();
 	function init(){
 		
@@ -114,6 +123,17 @@ app.controller('productCtrl',['$scope','$rootScope','$state','$http','productFac
 		$scope.state=$state.current.name;
 		changeWidth();
 	};
+
+	$scope.setOrder=function(type){
+		if($scope.sort.field==type){
+			$scope.sort.reverse=!$scope.sort.reverse
+		}
+		else{
+			$scope.sort.field=type;
+			$scope.sort.reverse=true;
+		}
+	}
+
 	function getAllProducts(){
 		productFactory.getAllProducts()
 			.then(function(response){
@@ -213,14 +233,19 @@ app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams',
 	$scope.getItem= function(){
 		productFactory.getProduct($stateParams.productID)
 			.then(function(res){
-
 				$scope.product=res.data.data;
 			},function(err){
 				window.warning('Cannot get product.\n Error message: '+ err.message);
 			});
 	};
-	$scope.editItem= function(){
-
+	$scope.editProduct= function(){
+		productFactory.updateProduct($scope.product)
+			.then(function(res){
+				window.alert("Edit successfully.");
+				$scope.getItem();
+			},function(err){
+				window.warning("Cannot edit product.\n Error message: "+ err.message);
+			});
 	}
 
 	$scope.adjustStock= function(id){
@@ -268,9 +293,9 @@ app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams',
 /* 10 */
 /***/ (function(module, exports) {
 
-app.directive('addProduct',function(){
+app.directive('addAdjust',function(){
 	return {
-		templateUrl: '../view/detailcontent/product/addProduct.html',
+		templateUrl: '../view/detailcontent/product/addAdjust.html',
 		replace:true,
 		link:function($scope, element, attrs){
 			$('.modal').modal();
@@ -282,6 +307,20 @@ app.directive('addProduct',function(){
 /* 11 */
 /***/ (function(module, exports) {
 
+app.directive('addProduct',function(){
+	return {
+		templateUrl: '../view/detailcontent/product/addProduct.html',
+		replace:true,
+		link:function($scope, element, attrs){
+			$('.modal').modal();
+		}
+	}
+})
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports) {
+
 app.directive('appContent',function(){
 	return {
 		templateUrl: '../view/appcontent/index.html',
@@ -290,7 +329,7 @@ app.directive('appContent',function(){
 })
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 app.directive('detailContent',function(){
@@ -302,7 +341,7 @@ app.directive('detailContent',function(){
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 app.directive('headerBar',function(){
@@ -314,7 +353,21 @@ app.directive('headerBar',function(){
 
 
 /***/ }),
-/* 14 */
+/* 15 */
+/***/ (function(module, exports) {
+
+app.directive('productEdit',function(){
+	return {
+		templateUrl: '../view/detailcontent/product/productEdit.html',
+		replace:true,
+		link:function($scope, element, attrs){
+			$('.modal').modal();
+		}
+	}
+})
+
+/***/ }),
+/* 16 */
 /***/ (function(module, exports) {
 
 app.directive('sideBar',function(){
@@ -326,7 +379,7 @@ app.directive('sideBar',function(){
 
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports) {
 
 app.directive('uiSrefActiveIf', ['$state', function($state) {
@@ -350,7 +403,7 @@ app.directive('uiSrefActiveIf', ['$state', function($state) {
 }])
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports) {
 
 app.factory('productFactory',['$http',function($http){
@@ -381,8 +434,6 @@ app.factory('productFactory',['$http',function($http){
 }])
 
 /***/ }),
-/* 17 */,
-/* 18 */,
 /* 19 */,
 /* 20 */,
 /* 21 */,
@@ -394,7 +445,9 @@ app.factory('productFactory',['$http',function($http){
 /* 27 */,
 /* 28 */,
 /* 29 */,
-/* 30 */
+/* 30 */,
+/* 31 */,
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 angular = __webpack_require__(0);
@@ -409,4 +462,4 @@ __webpack_require__(3);
 
 
 /***/ })
-],[30]);
+],[32]);

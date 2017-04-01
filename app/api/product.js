@@ -5,7 +5,6 @@ var processTime=function(product){
 	for(i=0;i<changeHistory.length;i++){
 		date=moment(changeHistory[i].date).format('DD-MM-YYYY');
 		changeHistory[i].date=date;
-		console.log(changeHistory[i].date)
 	}
 	product.changeHistory=changeHistory;
 	sellHistory=product.sellHistory;
@@ -14,7 +13,6 @@ var processTime=function(product){
 		sellHistory[i].date=date;
 	}	
 	product.sellHistory=sellHistory;
-	console.log(product);
 	return product;
 }
 

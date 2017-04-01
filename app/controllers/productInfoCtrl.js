@@ -27,14 +27,19 @@ app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams',
 	$scope.getItem= function(){
 		productFactory.getProduct($stateParams.productID)
 			.then(function(res){
-
 				$scope.product=res.data.data;
 			},function(err){
 				window.warning('Cannot get product.\n Error message: '+ err.message);
 			});
 	};
-	$scope.editItem= function(){
-
+	$scope.editProduct= function(){
+		productFactory.updateProduct($scope.product)
+			.then(function(res){
+				window.alert("Edit successfully.");
+				$scope.getItem();
+			},function(err){
+				window.warning("Cannot edit product.\n Error message: "+ err.message);
+			});
 	}
 
 	$scope.adjustStock= function(id){

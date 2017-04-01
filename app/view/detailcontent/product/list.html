@@ -2,36 +2,49 @@
 	<add-product></add-product>
 	<div class='row action-bar'>
 		<button data-target="addForm" class='addButton btn waves-effect waves-light word-btn'><i class="fa fa-plus" aria-hidden="true"></i> Add</button>
+		<select ng-class="{'browser-default':true,col:true,s2:state=='product.list',s6:state=='product.info'}" data-ng-model='sort.field'>
+			<option value="" disabled selected>Choose your order</option>
+			<option value="name">Name</option>
+			<option value="itemType">Type</option>
+			<option value="stock">Stock</option>
+		</select>
+		<input type="checkbox" data-ng-model="sort.reverse"/>
 	</div>
 	<add-product></add-product>
 	<div id='product-list'>
 		<div class='listing-header row' ng-show="state=='product.list'">
-			<div ng-class='{col:true,s5:state=="product.list",s12:state=="product.info",cell:true}' style='text-align:left'>
+			<div ng-class='{col:true,s4:state=="product.list",s12:state=="product.info",cell:true}' style='text-align:left' ng-click='setOrder("name")'>
 				<span>Name</span>
 			</div>
 			<div class='col s3 cell' style='text-align:left'>
 				<span>Unit</span>
 			</div>
-			<div class='col s2 cell' style='text-align:right'>
+			<div class='col s2 cell' style='text-align:right' ng-click='setOrder("itemType")'>
 				<span>Type</span>
 			</div>
-			<div class='col s2 cell' style='text-align:right'>
+			<div class='col s2 cell' style='text-align:right' ng-click='setOrder("stock")'>
 				<span>In stock</span>
 			</div>
 		</div>
-		<div class='product-listing' ng-repeat='product in products'>
+		
+		<div class='product-listing' ng-repeat='product in products|orderBy:sort.field:sort.reverse'>
 			<div class='product-container' ui-sref='product.info({productID:product._id})'>
-				<div ng-class='{col:true,s5:state=="product.list",s12:state=="product.info",cell:true,"have-border-top":state=="product.info"&&$index==0}' style='text-align:left'>
-					<span>{{product.name}}</span>
-				</div>
-				<div class='col s3 cell' style='text-align:left' ng-show="state=='product.list'">
-					<span>{{product.unit}}</span>
-				</div>
-				<div class='col s2 cell' style='text-align:right' ng-show="state=='product.list'">
-					<span>{{product.itemType}}</span>
-				</div>
-				<div class='col s2 cell' style='text-align:right' ng-show="state=='product.list'">
-					<span>{{product.stock}}</span>
+				<div>
+					<div ng-class='{col:true,s4:state=="product.list",s12:state=="product.info",cell:true,"have-border-top":state=="product.info"&&$index==0}' style='text-align:left'>
+						<span>{{product.name}}</span>
+					</div>
+					<div class='col s3 cell' style='text-align:left' ng-show="state=='product.list'">
+						<span>{{product.unit}}</span>
+					</div>
+					<div class='col s2 cell' style='text-align:right' ng-show="state=='product.list'">
+						<span>{{product.itemType}}</span>
+					</div>
+					<div class='col s2 cell' style='text-align:right' ng-show="state=='product.list'">
+						<span>{{product.stock}}</span>
+					</div>
+					<div class='col s1 cell' ng-show="state=='product.list'">
+						<span style='color:white'>_</span>
+					</div>	
 				</div>
 			</div>
 		</div>

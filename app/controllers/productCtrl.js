@@ -12,6 +12,12 @@ app.controller('productCtrl',['$scope','$rootScope','$state','$http','productFac
 	$scope.unit='';
 	$scope.changeHistory=[];
 	$scope.sellHistory=[];
+
+	$scope.sort={
+		field:'name',
+		reverse:false
+	}
+
 	init();
 	function init(){
 		
@@ -19,6 +25,17 @@ app.controller('productCtrl',['$scope','$rootScope','$state','$http','productFac
 		$scope.state=$state.current.name;
 		changeWidth();
 	};
+
+	$scope.setOrder=function(type){
+		if($scope.sort.field==type){
+			$scope.sort.reverse=!$scope.sort.reverse
+		}
+		else{
+			$scope.sort.field=type;
+			$scope.sort.reverse=true;
+		}
+	}
+
 	function getAllProducts(){
 		productFactory.getAllProducts()
 			.then(function(response){
