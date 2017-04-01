@@ -1,0 +1,48 @@
+<div id='addForm' class='modal'>
+	<h4 class='modal-title'>ADD PRODUCT</h4>
+	<div class='modal-content' class='row'>
+		<form ng-submit='addProduct()' class='col s12'>
+			<div class='row'>
+				<div class='input-field col s12'>
+					<input id='product-name' type='text' ng-model='name' required>
+					<label for='product-name'>Product name</label>
+				</div>
+			</div>
+			<div class='row'>
+				<div class='input-field col s6'>
+					<input id='product-buyPrice' type='number' ng-model='buyPrice' required>
+					<label for='product-buyPrice'>Purchase Cost</label>
+				</div>
+				<div class='input-field col s6'>
+					<input id='product-sellPrice' type='number' ng-model='sellPrice' required>
+					<label for='product-sellPrice'>Sell Price</label>
+				</div>
+			</div>
+			<div class='row'>
+				<div class='input-field col s12'>
+					<input id='product-type' type='text' ng-model='itemType' required>
+					<label for='product-type'>Type</label>
+				</div>
+			</div>
+			<div class='row'>
+				<div class='input-field col s12'>
+					<input id='product-stock' type='number' ng-model='stock' required>
+					<label for='product-stock'>Amount</label>
+				</div>
+			</div>
+			<div class='row'>
+				<div class='input-field col s12'>
+					<input id='product-restock' type='number' ng-model='restockAmount' required>
+					<label for='product-restock'>Restock Amount</label>
+				</div>
+			</div>
+			<div class='row'>
+				<div class='input-field col s12'>
+					<input id='product-unit' type='text' ng-model='unit' required>
+					<label for='product-unit'>Unit</label>
+				</div>
+			</div>
+			<button class='btn' style='float:right' type='submit'>Add</button>
+		</form>
+	</div>
+</div>

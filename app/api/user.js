@@ -12,10 +12,12 @@ module.exports = function(exrouter){
 			res.json(products);
 		});
 	}).post(function(req,res){
-		tmp= new User();
-		tmp.name=req.body.name;
-		tmp.password=req.body.password;
-		tmp.isAdmin=req.body.isAdmin;
+		tmp= new User({
+			name: req.body.name,
+			password: req.body.password,
+			isAdmin: req.body.isAdmin,
+		});
+
 		var response={}
 		tmp.save(function(err){
 			if(err){

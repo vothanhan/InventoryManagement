@@ -3,4 +3,6 @@
 require("./headerbar");
 require("./appcontent");
 require("./sidebar");
-require("./detailcontent")
+require("./detailcontent");
+require("./uiSrefActiveIf");
+require("./addProduct");

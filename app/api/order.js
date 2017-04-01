@@ -12,12 +12,13 @@ module.exports = function(exrouter){
 			res.json(products);
 		});
 	}).post(function(req,res){
-		tmp= new Order();
-		tmp.name=req.body.name;
-		tmp.supplierName=req.body.supplierName;
-		tmp.batch=req.body.batch;
-		tmp.price=req.body.price;
-		tmp.isSolved=req.body.isSolved;
+		tmp= new Order({
+			name: req.body.name,
+			supplierName: req.body.supplierName,
+			batch: req.body.batch,
+			price: req.body.price,
+			isSolved: req.body.isSolved
+		});
 		var response={}
 		tmp.save(function(err){
 			if(err){

@@ -5,9 +5,8 @@ webpackJsonp([0],[
 
 "use strict";
 
-
-
 __webpack_require__(8);
+__webpack_require__(9);
 
 /***/ }),
 /* 2 */
@@ -16,16 +15,18 @@ __webpack_require__(8);
 "use strict";
 
 
+__webpack_require__(13);
 __webpack_require__(11);
-__webpack_require__(9);
+__webpack_require__(14);
 __webpack_require__(12);
-__webpack_require__(10)
+__webpack_require__(15);
+__webpack_require__(10);
 
 /***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(13);
+__webpack_require__(16);
 
 /***/ }),
 /* 4 */
@@ -39,9 +40,33 @@ app.config(function($stateProvider,$urlRouterProvider,$locationProvider){
 	});
 	$stateProvider.state('product',{
 		url:'/product',
-		templateUrl: '../view/detailcontent/product/index.html',
-		controller:'productCtrl'
-	});
+		template: '<div ui-view="itemlist" id="itemlist"></div><div ui-view="sideinfo" id="sideinfo"></div>',
+		abstract:true
+	})
+		.state('product.list',{
+			url:'/list',
+			views:{
+				"itemlist":{
+					controller:'productCtrl',
+					templateUrl:"../view/detailcontent/product/list.html"
+				},
+				"sideinfo":{
+					template:""
+				}
+			}
+		}).state('product.info',{
+			url:'/{productID}',
+			views:{
+				"itemlist":{
+					controller:'productCtrl',
+					templateUrl:"../view/detailcontent/product/list.html"
+				},
+				"sideinfo":{
+					templateUrl:"../view/detailcontent/product/info.html",
+					controller:'productInfoCtrl'
+				}
+			}
+		});
 	$stateProvider.state('order',{
 		url:'/order',
 		template: '<h1>Hello Order!!!</h1>'
@@ -68,22 +93,25 @@ app.config(function($stateProvider,$urlRouterProvider,$locationProvider){
 /* 8 */
 /***/ (function(module, exports) {
 
-app.controller('productCtrl',['$scope','$rootScope','$http','productFactory',function($scope,$rootScope,$http,productFactory){
+app.controller('productCtrl',['$scope','$rootScope','$state','$http','productFactory',function($scope,$rootScope,$state,$http,productFactory){
 	var ctrl=this;
 	var products=[];
-
 	$scope.status;
+	$scope.state;
 	$scope.name='';
 	$scope.itemType='';
-	$scope.price='';
+	$scope.sellPrice='';
+	$scope.buyPrice='';
 	$scope.stock='';
+	$scope.restockAmount='';
+	$scope.unit='';
 	init();
 	function init(){
+		
 		getAllProducts();
-		$('.modal').modal();
-
+		$scope.state=$state.current.name;
+		changeWidth();
 	};
-
 	function getAllProducts(){
 		productFactory.getAllProducts()
 			.then(function(response){
@@ -91,7 +119,18 @@ app.controller('productCtrl',['$scope','$rootScope','$http','productFactory',fun
 			},function(error){
 				$scope.status='Unable to load products. Message:'+error.message;
 			});
-	}	
+	};
+	function changeWidth(){
+		var list=$('#itemlist');
+		if($scope.state=='product.list')
+		{
+			list.width('100%');
+			
+		}
+		else if($scope.state=='product.info'){
+			list.css({'float':'left','width':'25rem'});
+		}
+	};
 	$scope.getProduct=function(id){
 		response={};
 		productFactory.getProduct(id)
@@ -114,11 +153,16 @@ app.controller('productCtrl',['$scope','$rootScope','$http','productFactory',fun
 			});
 	}
 	$scope.addProduct = function(){
-		newProduct={};
-		newProduct.name=$scope.name;
-		newProduct.itemType=$scope.itemType;
-		newProduct.price=$scope.price;
-		newProduct.stock=$scope.stock;
+
+		newProduct={
+			name:$scope.name,
+			itemType:$scope.itemType,
+			sellPrice:$scope.sellPrice,
+			buyPrice:$scope.buyPrice,
+			restockAmount:$scope.restockAmount,
+			stock:$scope.stock,
+			unit:$scope.unit
+		};
 		productFactory.addProduct(newProduct).then(function(response){
 			$scope.products.push(response.data.data);
 			window.alert('Add '+ $scope.name +' successfully');
@@ -126,12 +170,58 @@ app.controller('productCtrl',['$scope','$rootScope','$http','productFactory',fun
 		},function(error){
 			window.alert("Cannot add " + $scope.name+"\nError message: "+error.message);
 		});
+
+		return false;
 	}
 
 }])
 
 /***/ }),
 /* 9 */
+/***/ (function(module, exports) {
+
+app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams','productFactory',function($scope,$rootScope,$state,$stateParams,productFactory){
+
+	$scope.product;
+
+	var init= function(){
+		$scope.getItem();
+		changeWidth();
+	}
+	function changeWidth(){
+		var info=$('#sideinfo');
+		info.addClass('inInfo');
+	}
+	$scope.getItem= function(){
+		productFactory.getProduct($stateParams.productID)
+			.then(function(res){
+				$scope.product=res.data.data;
+			},function(err){
+				window.warning('Cannot get product.\n Error message: '+ err.message);
+			});
+	};
+	$scope.editItem= function(){
+
+	}
+	init();
+}])
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
+app.directive('addProduct',function(){
+	return {
+		templateUrl: '../view/detailcontent/product/addProduct.html',
+		replace:true,
+		link:function($scope, element, attrs){
+			$('.modal').modal();
+		}
+	}
+})
+
+/***/ }),
+/* 11 */
 /***/ (function(module, exports) {
 
 app.directive('appContent',function(){
@@ -142,7 +232,7 @@ app.directive('appContent',function(){
 })
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports) {
 
 app.directive('detailContent',function(){
@@ -154,7 +244,7 @@ app.directive('detailContent',function(){
 
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports) {
 
 app.directive('headerBar',function(){
@@ -166,7 +256,7 @@ app.directive('headerBar',function(){
 
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports) {
 
 app.directive('sideBar',function(){
@@ -178,7 +268,31 @@ app.directive('sideBar',function(){
 
 
 /***/ }),
-/* 13 */
+/* 15 */
+/***/ (function(module, exports) {
+
+app.directive('uiSrefActiveIf', ['$state', function($state) {
+	return {
+		restrict: "A",
+		controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
+			var state = $attrs.uiSrefActiveIf;
+
+			function update() {
+				if ( $state.includes(state) || $state.is(state) ) {
+					$element.addClass("active");
+				} else {
+					$element.removeClass("active");
+				}
+			}
+
+			$scope.$on('$stateChangeSuccess', update);
+			update();
+		}]
+	};
+}])
+
+/***/ }),
+/* 16 */
 /***/ (function(module, exports) {
 
 app.factory('productFactory',['$http',function($http){
@@ -186,12 +300,10 @@ app.factory('productFactory',['$http',function($http){
 	var urlBase='/api/items';
 
 	productFactory.getAllProducts = function(){
-		console.log($http.get(urlBase));
 		return $http.get(urlBase);
 	};
 
 	productFactory.getProduct = function(id){
-		console.log($http.get(urlBase+'/'+id));
 		return $http.get(urlBase+'/'+id);
 	};
 
@@ -211,9 +323,6 @@ app.factory('productFactory',['$http',function($http){
 }])
 
 /***/ }),
-/* 14 */,
-/* 15 */,
-/* 16 */,
 /* 17 */,
 /* 18 */,
 /* 19 */,
@@ -224,7 +333,10 @@ app.factory('productFactory',['$http',function($http){
 /* 24 */,
 /* 25 */,
 /* 26 */,
-/* 27 */
+/* 27 */,
+/* 28 */,
+/* 29 */,
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 angular = __webpack_require__(0);
@@ -239,4 +351,4 @@ __webpack_require__(3);
 
 
 /***/ })
-],[27]);
+],[30]);

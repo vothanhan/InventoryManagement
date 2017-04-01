@@ -1,0 +1,39 @@
+<div id='product-page' ng-class='{info:state=="product.info"}'>
+	<add-product></add-product>
+	<div class='row action-bar'>
+		<button data-target="addForm" class='addButton btn waves-effect waves-light word-btn'><i class="fa fa-plus" aria-hidden="true"></i> Add</button>
+	</div>
+	<add-product></add-product>
+	<div id='product-list'>
+		<div class='listing-header row' ng-show="state=='product.list'">
+			<div ng-class='{col:true,s5:state=="product.list",s12:state=="product.info",cell:true}' style='text-align:left'>
+				<span>Name</span>
+			</div>
+			<div class='col s3 cell' style='text-align:left'>
+				<span>Unit</span>
+			</div>
+			<div class='col s2 cell' style='text-align:right'>
+				<span>Type</span>
+			</div>
+			<div class='col s2 cell' style='text-align:right'>
+				<span>In stock</span>
+			</div>
+		</div>
+		<div class='product-listing' ng-repeat='product in products'>
+			<div class='product-container' ui-sref='product.info({productID:product._id})'>
+				<div ng-class='{col:true,s5:state=="product.list",s12:state=="product.info",cell:true,"have-border-top":state=="product.info"}' style='text-align:left'>
+					<span>{{product.name}}</span>
+				</div>
+				<div class='col s3 cell' style='text-align:left' ng-show="state=='product.list'">
+					<span>{{product.unit}}</span>
+				</div>
+				<div class='col s2 cell' style='text-align:right' ng-show="state=='product.list'">
+					<span>{{product.itemType}}</span>
+				</div>
+				<div class='col s2 cell' style='text-align:right' ng-show="state=='product.list'">
+					<span>{{product.stock}}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

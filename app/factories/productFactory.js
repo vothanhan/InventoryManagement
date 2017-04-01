@@ -3,12 +3,10 @@ app.factory('productFactory',['$http',function($http){
 	var urlBase='/api/items';
 
 	productFactory.getAllProducts = function(){
-		console.log($http.get(urlBase));
 		return $http.get(urlBase);
 	};
 
 	productFactory.getProduct = function(id){
-		console.log($http.get(urlBase+'/'+id));
 		return $http.get(urlBase+'/'+id);
 	};
 

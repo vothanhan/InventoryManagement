@@ -12,12 +12,15 @@ module.exports = function(exrouter){
 			res.json(products);
 		});
 	}).post(function(req,res){
-		tmp= new Product();
-		tmp.name=req.body.name;
-		tmp.price=parseInt(req.body.price);
-		tmp.itemType=req.body.itemType;
-		tmp.stock=req.body.stock;
-		var response={}
+		tmp= new Product({
+			name: req.body.name,
+			sellPrice: req.body.sellPrice,
+			buyPrice: req.body.buyPrice,
+			itemType: req.body.itemType,
+			stock: req.body.stock,
+			restockAmount: req.body.restockAmount,
+			unit: req.body.unit
+		});
 		Product.findOne({'name':tmp.name},function(err,product){
 			if(err){
 				console.log(err);

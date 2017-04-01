@@ -1,0 +1,89 @@
+.listing-header{
+	margin-bottom:0px!important;
+	font-size:1.2rem;
+	color:#263035;
+	border-top:1px solid #ededed;
+	border-bottom:1px solid #ededed;
+}
+
+.listing-header .cell{
+	background:#f7f7f7;
+	padding:0.5rem 0 0.5rem 0;
+}
+
+.product-listing:nth-of-type(even) {
+	background:#E0E3E2;
+}
+.product-listing .cell{
+	background:inherit;
+	border-bottom:1px solid #ededed;
+	padding:0.8rem 0.75rem 0.8rem 0.75rem!important;
+}
+
+#addForm{
+	width:50rem;
+	max-height:85%!important;
+	position:absolute;
+	transform:translate(50%,50%);
+	border:1px solid #BFAFAF;
+	padding:1rem 4rem 1rem 4rem;
+	background:#F2F2F2;
+}
+#addForm input{
+	padding:0px 1rem 0px 0px;
+}
+
+.modal-title{
+	margin:0px -4rem 0px -4rem;
+	padding:0px 0px 1rem 2rem;
+	border-bottom:1px solid gray;
+}
+.addButton{
+	float:right;
+}
+.action-bar{
+	margin-bottom:2rem;
+}
+
+#sideinfo.inInfo{
+	border-left:1px solid #BFAFAF;
+	width:calc(100% - 25rem);
+	left:25rem;
+	position:absolute;
+	height:100%;
+}
+#itemlist{
+	height:100%;
+}
+
+.action-bar{
+	padding:1rem 1rem 0 1rem;
+	margin-bottom:10px;
+}
+
+.info-title{
+	padding:1rem 1rem 1rem 1rem;
+}
+
+.action-button{
+	margin-left:0.6rem!important;
+	padding:0 1rem 0 1rem!important;
+	box-shadow: none!important;
+	border: 1px solid #EFE3E3!important;
+}
+
+.icon-btn{
+	float:right;
+	background-color:white!important;
+	color: gray!important;
+}
+.word-btn{
+	float:right;
+	background-color:#2FA3E6!important;
+}
+.close-btn{
+	border:none!important;
+}
+.have-border-top{
+	border-top:1px solid #ededed;
+}

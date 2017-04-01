@@ -12,8 +12,9 @@ module.exports = function(exrouter){
 			res.json(products);
 		});
 	}).post(function(req,res){
-		tmp= new Supplier();
-		tmp.name=req.body.name;
+		tmp= new Supplier({
+			name:req.body.name
+		});
 		var response={}
 		tmp.save(function(err){
 			if(err){

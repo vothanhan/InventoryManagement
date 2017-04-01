@@ -6,9 +6,33 @@ app.config(function($stateProvider,$urlRouterProvider,$locationProvider){
 	});
 	$stateProvider.state('product',{
 		url:'/product',
-		templateUrl: '../view/detailcontent/product/index.html',
-		controller:'productCtrl'
-	});
+		template: '<div ui-view="itemlist" id="itemlist"></div><div ui-view="sideinfo" id="sideinfo"></div>',
+		abstract:true
+	})
+		.state('product.list',{
+			url:'/list',
+			views:{
+				"itemlist":{
+					controller:'productCtrl',
+					templateUrl:"../view/detailcontent/product/list.html"
+				},
+				"sideinfo":{
+					template:""
+				}
+			}
+		}).state('product.info',{
+			url:'/{productID}',
+			views:{
+				"itemlist":{
+					controller:'productCtrl',
+					templateUrl:"../view/detailcontent/product/list.html"
+				},
+				"sideinfo":{
+					templateUrl:"../view/detailcontent/product/info.html",
+					controller:'productInfoCtrl'
+				}
+			}
+		});
 	$stateProvider.state('order',{
 		url:'/order',
 		template: '<h1>Hello Order!!!</h1>'

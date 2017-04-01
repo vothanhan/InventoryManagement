@@ -1,19 +1,22 @@
-app.controller('productCtrl',['$scope','$rootScope','$http','productFactory',function($scope,$rootScope,$http,productFactory){
+app.controller('productCtrl',['$scope','$rootScope','$state','$http','productFactory',function($scope,$rootScope,$state,$http,productFactory){
 	var ctrl=this;
 	var products=[];
-
 	$scope.status;
+	$scope.state;
 	$scope.name='';
 	$scope.itemType='';
-	$scope.price='';
+	$scope.sellPrice='';
+	$scope.buyPrice='';
 	$scope.stock='';
+	$scope.restockAmount='';
+	$scope.unit='';
 	init();
 	function init(){
+		
 		getAllProducts();
-		$('.modal').modal();
-
+		$scope.state=$state.current.name;
+		changeWidth();
 	};
-
 	function getAllProducts(){
 		productFactory.getAllProducts()
 			.then(function(response){
@@ -21,7 +24,18 @@ app.controller('productCtrl',['$scope','$rootScope','$http','productFactory',fun
 			},function(error){
 				$scope.status='Unable to load products. Message:'+error.message;
 			});
-	}	
+	};
+	function changeWidth(){
+		var list=$('#itemlist');
+		if($scope.state=='product.list')
+		{
+			list.width('100%');
+			
+		}
+		else if($scope.state=='product.info'){
+			list.css({'float':'left','width':'25rem'});
+		}
+	};
 	$scope.getProduct=function(id){
 		response={};
 		productFactory.getProduct(id)
@@ -44,11 +58,16 @@ app.controller('productCtrl',['$scope','$rootScope','$http','productFactory',fun
 			});
 	}
 	$scope.addProduct = function(){
-		newProduct={};
-		newProduct.name=$scope.name;
-		newProduct.itemType=$scope.itemType;
-		newProduct.price=$scope.price;
-		newProduct.stock=$scope.stock;
+
+		newProduct={
+			name:$scope.name,
+			itemType:$scope.itemType,
+			sellPrice:$scope.sellPrice,
+			buyPrice:$scope.buyPrice,
+			restockAmount:$scope.restockAmount,
+			stock:$scope.stock,
+			unit:$scope.unit
+		};
 		productFactory.addProduct(newProduct).then(function(response){
 			$scope.products.push(response.data.data);
 			window.alert('Add '+ $scope.name +' successfully');
@@ -56,6 +75,8 @@ app.controller('productCtrl',['$scope','$rootScope','$http','productFactory',fun
 		},function(error){
 			window.alert("Cannot add " + $scope.name+"\nError message: "+error.message);
 		});
+
+		return false;
 	}
 
 }])
