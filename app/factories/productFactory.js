@@ -21,6 +21,6 @@ app.factory('productFactory',['$http',function($http){
 	productFactory.deleteProduct = function(id){
 		return $http.delete(urlBase+'/'+id);
 	};
-
+	
 	return productFactory;
 }])

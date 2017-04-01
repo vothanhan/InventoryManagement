@@ -21,7 +21,7 @@
 		</div>
 		<div class='product-listing' ng-repeat='product in products'>
 			<div class='product-container' ui-sref='product.info({productID:product._id})'>
-				<div ng-class='{col:true,s5:state=="product.list",s12:state=="product.info",cell:true,"have-border-top":state=="product.info"}' style='text-align:left'>
+				<div ng-class='{col:true,s5:state=="product.list",s12:state=="product.info",cell:true,"have-border-top":state=="product.info"&&$index==0}' style='text-align:left'>
 					<span>{{product.name}}</span>
 				</div>
 				<div class='col s3 cell' style='text-align:left' ng-show="state=='product.list'">

@@ -8,4 +8,14 @@ module.exports = mongoose.model('Product',{
 	stock: Number,
 	restockAmount: Number,
 	unit: String,
+	changeHistory: [{
+		amount: Number,
+		reason: String,
+		date: Date
+	}],
+	sellHistory: [{
+		amount: Number,
+		reason: String,
+		date: Date
+	}]
 })

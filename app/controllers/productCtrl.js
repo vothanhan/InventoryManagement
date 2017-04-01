@@ -10,6 +10,8 @@ app.controller('productCtrl',['$scope','$rootScope','$state','$http','productFac
 	$scope.stock='';
 	$scope.restockAmount='';
 	$scope.unit='';
+	$scope.changeHistory=[];
+	$scope.sellHistory=[];
 	init();
 	function init(){
 		
@@ -66,7 +68,9 @@ app.controller('productCtrl',['$scope','$rootScope','$state','$http','productFac
 			buyPrice:$scope.buyPrice,
 			restockAmount:$scope.restockAmount,
 			stock:$scope.stock,
-			unit:$scope.unit
+			unit:$scope.unit,
+			changeHistory:[],
+			sellHistory:[]
 		};
 		productFactory.addProduct(newProduct).then(function(response){
 			$scope.products.push(response.data.data);

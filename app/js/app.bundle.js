@@ -105,6 +105,8 @@ app.controller('productCtrl',['$scope','$rootScope','$state','$http','productFac
 	$scope.stock='';
 	$scope.restockAmount='';
 	$scope.unit='';
+	$scope.changeHistory=[];
+	$scope.sellHistory=[];
 	init();
 	function init(){
 		
@@ -161,7 +163,9 @@ app.controller('productCtrl',['$scope','$rootScope','$state','$http','productFac
 			buyPrice:$scope.buyPrice,
 			restockAmount:$scope.restockAmount,
 			stock:$scope.stock,
-			unit:$scope.unit
+			unit:$scope.unit,
+			changeHistory:[],
+			sellHistory:[]
 		};
 		productFactory.addProduct(newProduct).then(function(response){
 			$scope.products.push(response.data.data);
@@ -184,9 +188,23 @@ app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams',
 
 	$scope.product;
 
+	$scope.selectTab=0;
+	$scope.stockAdjustAmount=0;
+	$scope.adjustReason='';
+	$scope.adjustDate='';
+
 	var init= function(){
 		$scope.getItem();
 		changeWidth();
+		$(document).ready(function(){
+			$('ul.tabs').tabs();
+		});
+		$('.datepicker').pickadate({
+			selectMonths: true, // Creates a dropdown to control month
+			day:'picker__day',
+			disabled:'picker__day--disabled'
+		});
+
 	}
 	function changeWidth(){
 		var info=$('#sideinfo');
@@ -195,6 +213,7 @@ app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams',
 	$scope.getItem= function(){
 		productFactory.getProduct($stateParams.productID)
 			.then(function(res){
+
 				$scope.product=res.data.data;
 			},function(err){
 				window.warning('Cannot get product.\n Error message: '+ err.message);
@@ -203,6 +222,45 @@ app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams',
 	$scope.editItem= function(){
 
 	}
+
+	$scope.adjustStock= function(id){
+		productFactory.getProduct(id)
+			.then(function(res){
+				var tmp=res.data.data;
+				var adjustment={"amount":$scope.stockAdjustAmount,"reason":$scope.adjustReason,"date":$("#adjust-date").val()}
+				tmp.changeHistory.push(adjustment);
+				tmp.stock+=$scope.stockAdjustAmount;
+				productFactory.updateProduct(tmp)
+					.then(function(res){
+						window.alert("Adjust successfully.");
+						$scope.getItem();
+					},function(err){
+						window.warning("Cannot adjust product.\n Error message: "+ err.message);
+					});
+				
+			},function(err){
+				window.warning('Cannot get product.\n Error message: '+ err.message);
+			});
+	}
+
+	$scope.deleteItem=function(id){
+		var bool=window.confirm("The item will be deleted permanently. Do you want to proceed?");
+		if(bool==true){
+			productFactory.deleteProduct(id)
+				.then(function(res){
+					window.alert("Delete successfully.");
+				},function(err){
+					window.warning("Cannot delete product. \n Error message: "+err.message);
+				})
+			$state.go('product.list');
+		}
+	}
+
+	$scope.selectTabs=function (tab){
+		$scope.selectTab=tab;
+	}
+
+	
 	init();
 }])
 
@@ -318,7 +376,7 @@ app.factory('productFactory',['$http',function($http){
 	productFactory.deleteProduct = function(id){
 		return $http.delete(urlBase+'/'+id);
 	};
-
+	
 	return productFactory;
 }])
 

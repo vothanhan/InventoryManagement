@@ -1,4 +1,22 @@
 var Product= require('../models/product.js');
+var moment= require('moment');
+var processTime=function(product){
+	changeHistory=product.changeHistory;
+	for(i=0;i<changeHistory.length;i++){
+		date=moment(changeHistory[i].date).format('DD-MM-YYYY');
+		changeHistory[i].date=date;
+		console.log(changeHistory[i].date)
+	}
+	product.changeHistory=changeHistory;
+	sellHistory=product.sellHistory;
+	for(i=0;i<sellHistory.length;i++){
+		date=moment(sellHistory[i].date).format('DD-MM-YYYY');
+		sellHistory[i].date=date;
+	}	
+	product.sellHistory=sellHistory;
+	console.log(product);
+	return product;
+}
 
 module.exports = function(exrouter){
 	//initialize Router
@@ -19,7 +37,9 @@ module.exports = function(exrouter){
 			itemType: req.body.itemType,
 			stock: req.body.stock,
 			restockAmount: req.body.restockAmount,
-			unit: req.body.unit
+			unit: req.body.unit,
+			changeHistory:[],
+			sellHistory:[]
 		});
 		Product.findOne({'name':tmp.name},function(err,product){
 			if(err){
@@ -55,6 +75,9 @@ module.exports = function(exrouter){
 				response={"error":true,"data":err};
 			}
 			else{
+				data=data.toJSON();
+				data=processTime(data);
+				console.log(data);
 				response={"error":false,"data":data};
 			}
 			res.json(response);
@@ -67,16 +90,16 @@ module.exports = function(exrouter){
 			}
 			else{
 				if(data!=null){
-					console.log(req.body.name);
-					if(req.body.name){
-						data.name=req.body.name;
-					}
-					if(req.body.price){
-						data.price=req.body.price;
-					}
-					if(req.body.itemType){
-						data.itemType=req.body.itemType;
-					}
+					console.log(req.body.changeHistory);
+					data.name= req.body.name;
+					data.sellPrice= req.body.sellPrice;
+					data.buyPrice= req.body.buyPrice;
+					data.itemType= req.body.itemType;
+					data.stock= req.body.stock;
+					data.restockAmount= req.body.restockAmount;
+					data.unit= req.body.unit;
+					data.changeHistory=req.body.changeHistory;
+					data.sellHistory=req.body.sellHistory;
 					data.save(function(err){
 						if (err){
 							response={"error":true,"data":err};
