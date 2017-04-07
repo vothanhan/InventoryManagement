@@ -1,0 +1,46 @@
+<div id='supplier-page' ng-class='{info:state=="supplier.info"}'>
+	<div class='row action-bar'>
+		<button data-target="addForm" class='addButton btn waves-effect waves-light word-btn'><i class="fa fa-plus" aria-hidden="true"></i> Add</button>
+		<select ng-class="{'browser-default':true,col:true,s2:state=='supplier.list',s6:state=='supplier.info'}" data-ng-model='sort.field'>
+			<option value="" disabled selected>Order by</option>
+			<option value="name">Name</option>
+		</select>
+		<input type="checkbox" data-ng-model="sort.reverse"/>
+	</div>
+	<add-supplier></add-supplier>
+	<div id='supplier-list'>
+		<div class='listing-header row' ng-show="state=='supplier.list'">
+			<div ng-class='{col:true,s4:state=="supplier.list",s12:state=="supplier.info",cell:true}' style='text-align:left' ng-click='setOrder("name")'>
+				<span>Name</span>
+			</div>
+			<div class='col s3 cell' style='text-align:left'>
+				<span>Phone Number</span>
+			</div>
+			<div class='col s3 cell' style='text-align:left'>
+				<span>Email</span>
+			</div>
+			<div class='col s2 cell'>
+				<span style='color:white'>_</span>
+			</div>	
+		</div>
+		
+		<div class='listing-item' ng-repeat='supplier in suppliers|orderBy:sort.field:sort.reverse'>
+			<div class='supplier-container' ui-sref='supplier.info({supplierID:supplier._id})'>
+				<div class='col s12' style='padding-left:0px;padding-right:0px'>
+					<div ng-class='{col:true,s4:state=="supplier.list",s12:state=="supplier.info",cell:true,"have-border-top":state=="supplier.info"&&$index==0}' style='text-align:left'>
+						<span>{{supplier.name}}</span>
+					</div>
+					<div class='col s3 cell' style='text-align:left' ng-show="state=='supplier.list'">
+						<span>{{supplier.phoneNumber}}</span>
+					</div>
+					<div class='col s3 cell' style='text-align:left' ng-show="state=='supplier.list'">
+						<span>{{supplier.email}}</span>
+					</div>
+					<div class='col s2 cell' ng-show="state=='supplier.list'">
+						<span style='color:white'>_</span>
+					</div>	
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

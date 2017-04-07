@@ -1,8 +1,9 @@
-app.controller('productCtrl',['$scope','$rootScope','$state','$http','productFactory',function($scope,$rootScope,$state,$http,productFactory){
+app.controller('supplierCtrl',['$scope','$rootScope','$state','$http','supplierFactory',function($scope,$rootScope,$state,$http,supplierFactory){
 	var ctrl=this;
-	var products=[];
+	$scope.suppliers=[];
 	$scope.status;
 	$scope.state;
+	
 	
 
 	$scope.sort={
@@ -13,7 +14,7 @@ app.controller('productCtrl',['$scope','$rootScope','$state','$http','productFac
 	init();
 	function init(){
 		
-		getAllProducts();
+		getAllSuppliers();
 		$scope.state=$state.current.name;
 		changeWidth();
 	};
@@ -26,30 +27,29 @@ app.controller('productCtrl',['$scope','$rootScope','$state','$http','productFac
 			$scope.sort.field=type;
 			$scope.sort.reverse=true;
 		}
-	};
-
-	function getAllProducts(){
-		productFactory.getAllProducts()
+	}
+	function getAllSuppliers(){
+		supplierFactory.getAllSuppliers()
 			.then(function(response){
-				$scope.products=response.data;
+				$scope.suppliers=response.data;
 			},function(error){
-				$scope.status='Unable to load products. Message:'+error.message;
+				$scope.status='Unable to load suppliers. Message:'+error.message;
 			});
 	};
 	function changeWidth(){
-		var list=$('#itemlist');
-		if($scope.state=='product.list')
+		var list=$('#supplierlist');
+		if($scope.state=='supplier.list')
 		{
 			list.width('100%');
 			
 		}
-		else if($scope.state=='product.info'){
+		else if($scope.state=='supplier.info'){
 			list.css({'float':'left','width':'25rem'});
 		}
 	};
-	$scope.getProduct=function(id){
+	$scope.getSupplier=function(id){
 		res={};
-		productFactory.getProduct(id)
+		supplierFactory.getSupplier(id)
 			.then(function(response){
 				res.data=response.data;
 				res.err=false;
@@ -59,14 +59,15 @@ app.controller('productCtrl',['$scope','$rootScope','$state','$http','productFac
 			});
 		return res;
 	}
-	$scope.deleteProduct = function(id,index){
-		productFactory.deleteProduct(id)
+	$scope.deleteSupplier = function(id,index){
+		supplierFactory.deleteSupplier(id)
 			.then(function(response){
-				$scope.products.splice(index,1);
+				$scope.suppliers.splice(index,1);
 				window.alert('Delete successfully ');
 			},function(error){
-				window.alert('Unable to delete product.\n Error message: '+error.message);
+				window.alert('Unable to delete supplier.\n Error message: '+error.message);
 			});
 	}
+	
 
 }])

@@ -11,10 +11,10 @@
 	padding:0.5rem 0 0.5rem 0;
 }
 
-.product-listing:nth-of-type(even) {
+.listing-item:nth-of-type(even) {
 	background:#E0E3E2;
 }
-.product-listing .cell{
+.listing-item .cell{
 	background:inherit;
 	border-bottom:1px solid #ededed;
 	padding:0.8rem 0.75rem 0.8rem 0.75rem!important;
@@ -96,16 +96,19 @@ li.tab a{
 	color:#2FA3E6 !important;
 }
 
-.title-adjust{
+.title-cell{
 	background-color:#ededed;
 	margin-top:-20px;
 	padding:0.6rem 0 0.6rem 0;
 }
-.adjust-cell{
+.item-cell{
 	border-bottom:1px solid #E0E0E0;
 }
 
-#editProduct{
-	padding:1rem 4rem 1rem 4rem;
-	max-height: 85%;
+.modal-form{
+	padding:1rem 4rem 1rem 4rem!important;
+	max-height: 85%!important;
+}
+.info-window{
+	padding-bottom:20px;
 }

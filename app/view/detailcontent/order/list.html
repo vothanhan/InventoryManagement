@@ -1,0 +1,48 @@
+<div id='order-page' ng-class='{info:state=="order.info"}' ng-init='init()'>
+	<div class='row action-bar'>
+		<button data-target="addForm" class='addButton btn waves-effect waves-light word-btn'><i class="fa fa-plus" aria-hidden="true"></i> Add</button>
+		<select ng-class="{'browser-default':true,col:true,s2:state=='order.list',s6:state=='order.info'}" data-ng-model='sort.field'>
+			<option value="" disabled selected>Order by</option>
+			<option value="name">Name</option>
+			<option value="supplierName">Supplier</option>
+			<option value="isSolved">Is Solved</option>
+		</select>
+		<input type="checkbox" data-ng-model="sort.reverse"/>
+	</div>
+	<add-order></add-order>
+	<div id='order-list'>
+		<div class='listing-header row' ng-show="state=='order.list'">
+			<div ng-class='{col:true,s3:state=="order.list",s12:state=="order.info",cell:true}' style='text-align:left' ng-click='setOrder("name")'>
+				<span>Name</span>
+			</div>
+			<div class='col s3 cell' style='text-align:left' ng-click='setOrder("supplierName")'>
+				<span>Supplier Name</span>
+			</div>
+			<div class='col s3 cell' style='text-align:right' ng-click='setOrder("isSolved")'>
+				<span>Solved</span>
+			</div>
+			<div class='col s3 cell' style='text-align:right'>
+				<span'>Created Date</span>
+			</div>
+		</div>
+		
+		<div class='listing-item' ng-repeat='order in orders|orderBy:sort.field:sort.reverse'>
+			<div class='order-container' ui-sref='order.info({orderID:order._id})'>
+				<div class='col s12' style='padding-left:0px;padding-right:0px'>
+					<div ng-class='{col:true,s3:state=="order.list",s12:state=="order.info",cell:true,"have-border-top":state=="order.info"&&$index==0}' style='text-align:left'>
+						<span>{{order.name}}</span>
+					</div>
+					<div class='col s3 cell' style='text-align:left' ng-show="state=='order.list'">
+						<span>{{getSupplierName(order.supplierName)}}</span>
+					</div>
+					<div class='col s3 cell' style='text-align:right' ng-show="state=='order.list'">
+						<span>{{order.isSolved}}</span>
+					</div>
+					<div class='col s3 cell' style='text-align:right' ng-show="state=='order.list'">
+						<span>{{convertDate(order.createdAt)}}</span>
+					</div>	
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

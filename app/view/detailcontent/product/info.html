@@ -1,4 +1,4 @@
-<div id='product-info' class='row'>
+<div id='product-info' class='row' ng-init='init()'>
 	<div id='product-info-content'>
 		<div class='info-title'>
 			<span style='font-size:26px'>{{product.name}}</span>
@@ -26,6 +26,7 @@
 				<ul class="tabs">
 					<li class="tab col s3" ng-click='selectTabs(0)'><a>Overview</a></li>
 					<li class="tab col s3" ng-click='selectTabs(1)'><a>Adjustment</a></li>
+					<li class="tab col s3" ng-click='selectTabs(2)'><a>Purchase</a></li>
 				</ul>
 			</div>
 		</div>
@@ -62,7 +63,7 @@
 			</div>
 		</div>
 		<div class='change-history' ng-show="selectTab==1">
-			<div class='title-adjust'>
+			<div class='title-cell'>
 				<div class='row' style='margin-bottom:0'>
 					<div class='col s5'>
 						<span>Reason</span>
@@ -79,7 +80,7 @@
 				<span>No adjustment yet.</span>
 			</div>
 			<div ng-repeat='adjustment in product.changeHistory'>
-				<div class='row adjust-cell col s12' style='margin-bottom:0;padding-left:0px'>
+				<div class='row item-cell col s12' style='margin-bottom:0;padding-left:0px'>
 					<div class='col s5'>
 						<span>{{adjustment.reason}}</span>
 					</div>
@@ -88,6 +89,43 @@
 					</div>
 					<div class='col s4'>
 						<span>{{adjustment.date}}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class='purchase-order' ng-show="selectTab==2">
+			<div class='title-cell'>
+				<div class='row' style='margin-bottom:0'>
+					<div class='col s4'>
+						<span>Order</span>
+					</div>
+					<div class='col s3'>
+						<span>Amount</span>
+					</div>
+					<div class='col s2'>
+						<span>Status</span>
+					</div>
+					<div class='col s3'>
+						<span>Date</span>
+					</div>
+				</div>
+			</div>
+			<div ng-show="purchaseOrder.length==0" style='text-align:center'>
+				<span>No order yet.</span>
+			</div>
+			<div ng-repeat='order in purchaseOrder'>
+				<div class='row item-cell col s12' style='margin-bottom:0;padding-left:0px'>
+					<div class='col s4' ui-sref='order.info({orderID:order._id})'>
+						<span style='color:#206ec5'>{{order.name}}</span>
+					</div>
+					<div class='col s3'>
+						<span>{{order.amount}}</span>
+					</div>
+					<div class='col s2'>
+						<span>{{order.stat}}</span>
+					</div>
+					<div class='col s3'>
+						<span>{{convertDate(order.createdAt)}}</span>
 					</div>
 				</div>
 			</div>

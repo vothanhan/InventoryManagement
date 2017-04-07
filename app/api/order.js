@@ -1,4 +1,6 @@
-var Order= require('../models/order.js');
+var Order= require('../models/order');
+var Supplier=require('../models/supplier');
+var Product= require('../models/product')
 
 module.exports = function(exrouter){
 	//initialize Router
@@ -16,15 +18,27 @@ module.exports = function(exrouter){
 			name: req.body.name,
 			supplierName: req.body.supplierName,
 			batch: req.body.batch,
-			price: req.body.price,
 			isSolved: req.body.isSolved
 		});
+
 		var response={}
-		tmp.save(function(err){
+		tmp.save(function(err,data){
 			if(err){
 				response={"error":true,"data":err};
 			}
-			else response={"error":false,"data":"Success"}
+			else {
+				for(i in req.body.batch){
+					console.log(req.body.batch[i].productID,data._id);
+					Product.update({_id:req.body.batch[i].productID},{$push:{purchaseOrder:{orderID:data._id}}},{new : true},
+					function(err, model) {
+						if(err){
+							console.log(err.message);
+						}
+						console.log(model)
+					});
+				}
+				response={"error":false,"data":data}
+			}
 			res.json(response);
 		});
 	})
@@ -47,21 +61,10 @@ module.exports = function(exrouter){
 			}
 			else{
 				if(data!=null){
-					if(req.body.name){
-						data.name=req.body.name;
-					}
-					if(req.body.supplierName){
-						data.supplierName=req.body.supplierName;
-					}
-					if(req.body.batch){
-						data.batch=req.body.batch;
-					}
-					if(req.body.price){
-						data.price=req.body.price;
-					}
-					if(req.body.isSolved){
-						data.isSolved=req.body.isSolved;
-					}
+					data.name=req.body.name;
+					data.supplierName=req.body.supplierName;
+					data.batch=req.body.batch;
+					data.isSolved=req.body.isSolved;
 					data.save(function(err){
 						if (err){
 							response={"error":true,"data":err};
@@ -92,5 +95,19 @@ module.exports = function(exrouter){
 		});
 	});
 
+	router.route("/api/orders/:id/:suppID").put(function(req,res){
+		var response={"error":false}
+		Supplier.findByIdAndUpdate(
+			req.params.suppID,
+			{$push: {"transaction": {orderID:req.params.id}}},
+			{new : true},
+			function(err, model) {
+				if(err){
+					console.log(err.message);
+				}
+			}
+		);
+		res.json(response)
+	});
 };
 

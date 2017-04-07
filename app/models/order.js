@@ -1,9 +1,12 @@
 var mongoose = require('mongoose');
-
-module.exports = mongoose.model('Order',{
+var schema= new mongoose.Schema({
 	name: String,
 	supplierName : String,
-	batch: [String],
-	price: Number,
+	batch: [{
+		productID: String,
+		amount: Number
+	}],
 	isSolved:Boolean
-})
+},{timestamps:true});
+
+module.exports = mongoose.model('Order',schema);

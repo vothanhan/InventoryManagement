@@ -1,0 +1,26 @@
+<div id='addForm' class='modal modal-form'>
+	<h4 class='modal-title'>ADD SUPPLIER</h4>
+	<div class='modal-content' class='row'>
+		<form ng-submit='addSupplier()' class='col s12'>
+			<div class='row'>
+				<div class='input-field col s12'>
+					<input id='supplier-name' type='text' ng-model='name' required>
+					<label for='supplier-name'>Supplier name</label>
+				</div>
+			</div>
+			<div class='row'>
+				<div class='input-field col s12'>
+					<input id='supplier-phone' type='text' ng-model='phoneNumber' required>
+					<label for='supplier-phone'>Phone Number</label>
+				</div>
+			</div>
+			<div class='row'>
+				<div class='input-field col s12'>
+					<input id='supplier-email' type='text' ng-model='email' required>
+					<label for='supplier-email'>Email</label>
+				</div>
+			</div>
+			<button class='btn word-btn' style='float:right' type='submit'>Add</button>
+		</form>
+	</div>
+</div>

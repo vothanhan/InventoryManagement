@@ -1,9 +1,8 @@
 <div id='product-page' ng-class='{info:state=="product.info"}'>
-	<add-product></add-product>
 	<div class='row action-bar'>
 		<button data-target="addForm" class='addButton btn waves-effect waves-light word-btn'><i class="fa fa-plus" aria-hidden="true"></i> Add</button>
 		<select ng-class="{'browser-default':true,col:true,s2:state=='product.list',s6:state=='product.info'}" data-ng-model='sort.field'>
-			<option value="" disabled selected>Choose your order</option>
+			<option value="" disabled selected>Order by</option>
 			<option value="name">Name</option>
 			<option value="itemType">Type</option>
 			<option value="stock">Stock</option>
@@ -27,7 +26,7 @@
 			</div>
 		</div>
 		
-		<div class='product-listing' ng-repeat='product in products|orderBy:sort.field:sort.reverse'>
+		<div class='listing-item' ng-repeat='product in products|orderBy:sort.field:sort.reverse'>
 			<div class='product-container' ui-sref='product.info({productID:product._id})'>
 				<div>
 					<div ng-class='{col:true,s4:state=="product.list",s12:state=="product.info",cell:true,"have-border-top":state=="product.info"&&$index==0}' style='text-align:left'>

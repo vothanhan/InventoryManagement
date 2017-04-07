@@ -1,0 +1,47 @@
+<div id='addForm' class='modal modal-form order-add'>
+	<h4 class='modal-title'>ADD ORDER</h4>
+	<div class='modal-content' class='row'>
+		<form ng-submit='addOrder()' class='col s12'>
+			<div class='row'>
+				<div class='input-field col s12'>
+					<input id='order-name' type='text' ng-model='name' required>
+					<label for='order-name'>Order name</label>
+				</div>
+			</div>
+			<div class='row'>
+				<div class='input-field col s12'>
+					<select class='browser-default' name='supplierSelect' id='order-supplierName' ng-options='supplier.name for supplier in suppliers track by supplier._id' ng-model='selectSupplier' required>
+						<option value=''>Select supplier</option>
+					</select>
+				</div>
+			</div>
+			<div class='row'>
+				<div class='col s12'>
+					<table class='striped bordered' style='table-layout: fixed'>
+						<thead>
+							<tr>
+								<td>Name</td>
+								<td>Amount</td>
+								<td>Rate</td>
+								<td>Price</td>
+								<td style='width:10px'></td>
+							</tr>
+						</thead>
+						<tbody id='order-product-list'>
+							<tr new-item></tr>
+						</tbody>
+					</table>
+
+				</div>
+					<ul id='product_dropdown' class='dropdown-content'>
+						<li ng-repeat='product in products' ng-click='setFunction(product)'>
+							<a>{{product.name}}</a>
+						</li>
+					</ul>
+					<button class= 'dropdown-button' data-activates='product_dropdown' style='display:none'></button>
+					<a ng-click='addNewLine()'>Add new line</a>
+			</div>
+			<button class='btn word-btn' style='float:right' type='submit'>Add</button>
+		</form>
+	</div>
+</div>

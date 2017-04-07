@@ -1,0 +1,75 @@
+<div id='supplier-info' class='row'>
+	<div id='supplier-info-content'>
+		<div class='info-title'>
+			<span style='font-size:26px'>{{supplier.name}}</span>
+
+			<button class='action-button btn remove-btn icon-btn close-btn' ui-sref='supplier.list'>
+				<i class="fa fa-times" aria-hidden="true" style='font-size:2rem'></i>
+			</button>
+
+			<button class='action-button btn remove-btn icon-btn waves-effect waves-light' ng-click='deleteSupplier(supplier._id)'>
+				<i class="fa fa-trash" aria-hidden="true"></i>
+			</button>
+
+			<button class='action-button btn edit-btn icon-btn waves-effect waves-light' data-target="editSupplier">
+				<i class="fa fa-pencil" aria-hidden="true"></i>
+			</button>
+		</div>
+		<add-transaction></add-transaction>
+		<supplier-edit></supplier-edit>
+		<div class= 'row' style='border-bottom:1px solid #BFAFAF;'>
+			<div class='col s12'>
+				<ul class="tabs">
+					<li class="tab col s3" ng-click='selectTabs(0)'><a>Overview</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class='info-window' class='col s12'>
+			<div class='row' style='padding-left:1rem;margin-bottom:0px;margin-top:-5px'>
+			<h5>Info</h5>
+			</div>
+			<div class='row'>
+				<label class='col s6' style='font-size:0.9rem'>Phone Number</label>
+				<span class='col s6'>{{supplier.phoneNumber}}</span>
+			</div>
+			<div class='row'>
+				<label class='col s6' style='font-size:0.9rem'>Email</label>
+				<span class='col s6'>{{supplier.email}}</span>
+			</div>
+		</div>
+		<div class='transaction-list'>
+			<div clas='row' style='padding-left:1rem;padding-bottom:1.5rem'>
+				<h5>Orders</h5>
+			</div>
+			<div class='title-cell'>
+				<div class='row' style='margin-bottom:0'>
+					<div class='col s5'>
+						<span>Product</span>
+					</div>
+					<div class='col s3'>
+						<span>Amount</span>
+					</div>
+					<div class='col s4'>
+						<span>Date</span>
+					</div>
+				</div>
+			</div>
+			<div ng-show="supplier.transaction.length==0" style='text-align:center'>
+				<span>No order yet.</span>
+			</div>
+			<div ng-repeat='transaction in transactions'>
+				<div class='row item-cell col s12' style='margin-bottom:0;padding-left:0px'>
+					<div class='col s5'>
+						<span>{{transaction.reason}}</span>
+					</div>
+					<div class='col s3'>
+						<span>{{transaction.amount}}</span>
+					</div>
+					<div class='col s4'>
+						<span>{{transaction.date}}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

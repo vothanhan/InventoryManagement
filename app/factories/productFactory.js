@@ -21,6 +21,14 @@ app.factory('productFactory',['$http',function($http){
 	productFactory.deleteProduct = function(id){
 		return $http.delete(urlBase+'/'+id);
 	};
+
+	productFactory.updateAmount = function (id,amount,reason){
+		return $http.put(urlBase+'/amount/'+id,{amount:amount,reason:reason});
+	}
 	
+	productFactory.updateOrder = function(id,orderID){
+		return $http.put(urlBase+"/order/"+id,{orderID:orderID});
+	}
+
 	return productFactory;
 }])

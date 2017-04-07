@@ -1,3 +1,7 @@
 'use strict';
 require('./productCtrl');
 require('./productInfoCtrl');
+require('./supplierCtrl');
+require('./supplierInfoCtrl');
+require('./orderCtrl');
+require('./orderInfoCtrl');

@@ -5,15 +5,18 @@ module.exports = function(exrouter){
 	router=exrouter;
 	//CRUD for supplier
 	router.route("/api/suppliers").get(function(req,res){
-		Supplier.find(function(err,products){
+		Supplier.find(function(err,suppliers){
 			if (err){
 				console.log(err);
 			}
-			res.json(products);
+			res.json(suppliers);
 		});
 	}).post(function(req,res){
 		tmp= new Supplier({
-			name:req.body.name
+			name:req.body.name,
+			phoneNumber:req.body.phoneNumber,
+			email:req.body.email,
+			transaction:req.body.transaction
 		});
 		var response={}
 		tmp.save(function(err){
@@ -43,9 +46,10 @@ module.exports = function(exrouter){
 			}
 			else{
 				if(data!=null){
-					if(req.body.name){
-						data.name=req.body.name;
-					}
+					data.name=req.body.name;
+					data.phoneNumber=req.body.phoneNumber;
+					data.email=req.body.email;
+					data.transaction=req.body.transaction;
 					data.save(function(err){
 						if (err){
 							response={"error":true,"data":err};
@@ -75,6 +79,51 @@ module.exports = function(exrouter){
 			res.json(response);
 		});
 	});
+
+	router.route("/api/suppliers/order/:id").put(function(req,res){
+		var errs=[]
+		var response={};
+		Supplier.update({_id:req.body.oldID},{$pull:{transaction:{orderID:req.params.id}}},function(err){
+			if(err){
+				errs.push(err);
+			}
+		});
+		Supplier.update({_id:req.body.newID},{$push:{transaction:{orderID:req.params.id}}},function(err){
+			if(err){
+				errs.push(err);
+			}
+		});
+		if(errs.length>=1){
+			response={errors:true,data:errs};
+		}
+		else {
+			response={errors:false,data:"Success"};
+		}
+		res.json(response);
+	}).post(function(req,res){
+		var response={};
+		if(req.body.remove==true){
+			Supplier.update({_id:req.params.id},{$pull:{transaction:{orderID:req.body.orderID}}},function(err){
+				if(err){
+					response={error:true,data:error};
+				}
+				else{
+					response={error:false,data:"Success"};
+				}
+			});
+		}
+		else{
+			Supplier.update({_id:req.params.id},{$push:{transaction:{orderID:req.body.orderID}}},function(err){
+				if(err){
+					response={error:true,data:error};
+				}
+				else{
+					response={error:false,data:"Success"};
+				}
+			});
+		}
+	});
+
 
 };
 

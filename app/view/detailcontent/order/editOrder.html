@@ -1,0 +1,21 @@
+<div id='editOrder' class='modal modal-form'>
+	<h4 class='modal-title'>EDIT ORDER</h4>
+	<div class='modal-content' class='row'>
+		<form ng-submit='editOrder()' class='col s12'>
+			<div class='row'>
+				<div class='input-field col s12'>
+					<input id='order-name' type='text' ng-model='eOrder.name' required>
+					<label for='order-name' class='active'>Order name</label>
+				</div>
+			</div>
+			<div class='row'>
+				<div class='input-field col s12'>
+					<select class='browser-default' name='supplierSelect' id='edit-supplierName' ng-options='supplier._id as supplier.name for supplier in suppliers' ng-model='eOrder.supplierName' required>
+						<option value=''>Select supplier</option>
+					</select>
+				</div>
+			</div>
+			<button class='btn word-btn' style='float:right' type='submit'>Confirm</button>
+		</form>
+	</div>
+</div>

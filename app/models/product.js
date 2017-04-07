@@ -11,8 +11,12 @@ module.exports = mongoose.model('Product',{
 	changeHistory: [{
 		amount: Number,
 		reason: String,
-		date: Date
+		date: Date,
 	}],
+	purchaseOrder:[{
+		orderID:String
+	}]
+	,
 	sellHistory: [{
 		amount: Number,
 		reason: String,

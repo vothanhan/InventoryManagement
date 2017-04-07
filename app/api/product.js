@@ -1,5 +1,7 @@
 var Product= require('../models/product.js');
 var moment= require('moment');
+
+
 var processTime=function(product){
 	changeHistory=product.changeHistory;
 	for(i=0;i<changeHistory.length;i++){
@@ -37,7 +39,8 @@ module.exports = function(exrouter){
 			restockAmount: req.body.restockAmount,
 			unit: req.body.unit,
 			changeHistory:[],
-			sellHistory:[]
+			sellHistory:[],
+			purchaseOrder:[]
 		});
 		Product.findOne({'name':tmp.name},function(err,product){
 			if(err){
@@ -75,7 +78,6 @@ module.exports = function(exrouter){
 			else{
 				data=data.toJSON();
 				data=processTime(data);
-				console.log(data);
 				response={"error":false,"data":data};
 			}
 			res.json(response);
@@ -88,7 +90,6 @@ module.exports = function(exrouter){
 			}
 			else{
 				if(data!=null){
-					console.log(req.body.changeHistory);
 					data.name= req.body.name;
 					data.sellPrice= req.body.sellPrice;
 					data.buyPrice= req.body.buyPrice;
@@ -98,6 +99,7 @@ module.exports = function(exrouter){
 					data.unit= req.body.unit;
 					data.changeHistory=req.body.changeHistory;
 					data.sellHistory=req.body.sellHistory;
+					data.purchaseOrder=req.body.purchaseOrder;
 					data.save(function(err){
 						if (err){
 							response={"error":true,"data":err};
@@ -128,5 +130,35 @@ module.exports = function(exrouter){
 		});
 	});
 
+	router.route("/api/items/amount/:id").put(function(req,res){
+		response={};
+		Product.findByIdAndUpdate(req.params.id,
+			{$push:{changeHistory:{amount:req.body.amount,reason:req.body.reason,date:new Date()}},$inc:
+				{stock:req.body.amount}},
+			{new:true},function(err,model){
+				if(err){
+					console.log(err);
+					response={'error':true,'data':err};
+				}
+				else{
+					response={'error':false,'data':'Update success'};
+				}
+			})
+		res.json(response);
+	});
+
+	router.route("/api/items/order/:id").put(function(req,res){
+		response={};
+		Product.update({_id:req.params.id},{$pull:{purchaseOrder:{orderID:req.body.orderID}}},{new:true},function(err,model){
+				if(err){
+					console.log(err);
+					response={'error':true,'data':err};
+				}
+				else{
+					response={'error':false,'data':'Update success'};
+				}
+			});
+		res.json(response);
+	})
 };
 
