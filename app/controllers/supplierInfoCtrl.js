@@ -1,7 +1,8 @@
-app.controller("supplierInfoCtrl",['$scope','$rootScope','$state','$stateParams','supplierFactory',function($scope,$rootScope,$state,$stateParams,supplierFactory){
+app.controller("supplierInfoCtrl",['$scope','$rootScope','$state','$stateParams','supplierFactory','orderFactory',function($scope,$rootScope,$state,$stateParams,supplierFactory,orderFactory){
 
 	$scope.supplier;
 
+	$scope.purchaseOrder=[];
 
 	var init= function(){
 		$scope.getSupplier();
@@ -16,6 +17,9 @@ app.controller("supplierInfoCtrl",['$scope','$rootScope','$state','$stateParams'
 		});
 
 	}
+
+	$scope.init=init;
+
 	function changeWidth(){
 		var info=$('#sideinfo');
 		info.addClass('inInfo');
@@ -24,6 +28,7 @@ app.controller("supplierInfoCtrl",['$scope','$rootScope','$state','$stateParams'
 		supplierFactory.getSupplier($stateParams.supplierID)
 			.then(function(res){
 				$scope.supplier=res.data.data;
+				getOrder(res.data.data.transaction);
 			},function(err){
 				window.warning('Cannot get supplier.\n Error message: '+ err.message);
 			});
@@ -61,6 +66,44 @@ app.controller("supplierInfoCtrl",['$scope','$rootScope','$state','$stateParams'
 		$scope.selectTab=tab;
 	}
 
+
+	function getOrder(orders){
+		$scope.purchaseOrder=[];
+		for(i in orders){
+			var tmp=orderFactory.getOrder(orders[i].orderID).then(function(res){
+				$scope.purchaseOrder.push(processOrder(res.data.data));
+			},function(err){
+				if(err){
+					alert("Cannot get orders of product!\n Error message: "+ err.message);
+				}
+			});
+		}
+	}
+
+	function processOrder(order){
+		var ret={};
+		ret._id=order._id;
+		ret.name=order.name;
+		ret.createdAt=order.createdAt;
+		if (order.isSolved==false){
+			ret.stat="Not Solved";
+		}
+		else {
+			ret.stat="Solved";
+		}
+		return ret;
+	}
+
+	function convertDate(string){
+		if (string==null)
+			return '';
+		var DateString=string.split('T')[0].split('-');
+		DateString.reverse();
+
+		return DateString.join('-');
+	}
+
+	$scope.convertDate=convertDate;
+
 	
-	init();
 }])
