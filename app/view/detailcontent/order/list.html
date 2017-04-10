@@ -36,7 +36,7 @@
 						<span>{{getSupplierName(order.supplierName)}}</span>
 					</div>
 					<div class='col s3 cell' style='text-align:right' ng-show="state=='order.list'">
-						<span>{{order.isSolved}}</span>
+						<span>{{getSolved(order.isSolved)}}</span>
 					</div>
 					<div class='col s3 cell' style='text-align:right' ng-show="state=='order.list'">
 						<span>{{convertDate(order.createdAt)}}</span>

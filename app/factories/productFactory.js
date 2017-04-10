@@ -29,6 +29,9 @@ app.factory('productFactory',['$http',function($http){
 	productFactory.updateOrder = function(id,orderID){
 		return $http.put(urlBase+"/order/"+id,{orderID:orderID});
 	}
+	productFactory.updateSaleOrder = function(id,orderID){
+		return $http.put(urlBase+"/saleorder/"+id,{orderID:orderID});
+	}
 
 	return productFactory;
 }])

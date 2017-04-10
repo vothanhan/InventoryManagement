@@ -7,10 +7,12 @@ webpackJsonp([0],[
 
 __webpack_require__(10);
 __webpack_require__(11);
-__webpack_require__(12);
-__webpack_require__(13);
+__webpack_require__(14);
+__webpack_require__(15);
 __webpack_require__(8);
 __webpack_require__(9);
+__webpack_require__(12);
+__webpack_require__(13);
 
 /***/ }),
 /* 2 */
@@ -19,19 +21,20 @@ __webpack_require__(9);
 "use strict";
 
 
-__webpack_require__(24);
-__webpack_require__(22);
-__webpack_require__(25);
-__webpack_require__(23);
 __webpack_require__(26);
-__webpack_require__(17);
-__webpack_require__(16);
+__webpack_require__(24);
+__webpack_require__(28);
+__webpack_require__(25);
+__webpack_require__(29);
 __webpack_require__(19);
 __webpack_require__(18);
-__webpack_require__(20);
 __webpack_require__(21);
-__webpack_require__(14);
-__webpack_require__(15);
+__webpack_require__(20);
+__webpack_require__(22);
+__webpack_require__(23);
+__webpack_require__(16);
+__webpack_require__(17);
+__webpack_require__(27);
 
 
 
@@ -40,10 +43,12 @@ __webpack_require__(15);
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(28);
+__webpack_require__(31);
+__webpack_require__(34);
 __webpack_require__(30);
-__webpack_require__(27);
-__webpack_require__(29);
+__webpack_require__(32);
+__webpack_require__(33);
+
 
 /***/ }),
 /* 4 */
@@ -57,7 +62,7 @@ app.config(function($stateProvider,$urlRouterProvider,$locationProvider){
 	});
 	$stateProvider.state('product',{
 		url:'/product',
-		template: '<div ui-view="itemlist" id="itemlist"></div><div ui-view="sideinfo" id="sideinfo"></div>',
+		template: '<div ui-view="itemlist" id="itemlist"></div><div ui-view="sideinfo" id="sideinfo" ></div>',
 		abstract:true
 	})
 		.state('product.list',{
@@ -68,7 +73,7 @@ app.config(function($stateProvider,$urlRouterProvider,$locationProvider){
 					templateUrl:"../view/detailcontent/product/list.html"
 				},
 				"sideinfo":{
-					template:""
+					template:"<div style='display:none'></div>"
 				}
 			}
 		}).state('product.info',{
@@ -96,7 +101,7 @@ app.config(function($stateProvider,$urlRouterProvider,$locationProvider){
 					templateUrl:"../view/detailcontent/order/list.html"
 				},
 				"sideinfo":{
-					template:""
+					template:"<div style='display:none'></div>"
 				}
 			},
 			resolve:{
@@ -128,6 +133,44 @@ app.config(function($stateProvider,$urlRouterProvider,$locationProvider){
 				}
 			}
 		});
+	$stateProvider.state('saleorder',{
+		url:'/saleorder',
+		template: '<div ui-view="orderlist" id="orderlist"></div><div ui-view="sideinfo" id="sideinfo"></div>',
+		abstract:true
+	}).state('saleorder.list',{
+			url:'/list',
+			views:{
+				"orderlist":{
+					controller:'saleOrderCtrl',
+					templateUrl:"../view/detailcontent/saleorder/list.html"
+				},
+				"sideinfo":{
+					template:"<div style='display:none'></div>"
+				}
+			},
+			resolve:{
+				products: function(productFactory){
+					return productFactory.getAllProducts();
+				}
+			}
+		}).state('saleorder.info',{
+			url:'/{orderID}',
+			views:{
+				"orderlist":{
+					controller:'saleOrderCtrl',
+					templateUrl:"../view/detailcontent/saleorder/list.html"
+				},
+				"sideinfo":{
+					templateUrl:"../view/detailcontent/saleorder/info.html",
+					controller:'saleOrderInfoCtrl'
+				}
+			},
+			resolve:{
+				products: function(productFactory){
+					return productFactory.getAllProducts();
+				}
+			}
+		});
 	$stateProvider.state('report',{
 		url:'/report',
 		template: '<h1>Hello Report!!!</h1>'
@@ -144,7 +187,7 @@ app.config(function($stateProvider,$urlRouterProvider,$locationProvider){
 					templateUrl:"../view/detailcontent/supplier/list.html"
 				},
 				"sideinfo":{
-					template:""
+					template:"<div style='display:none'></div>"
 				}
 			}
 		}).state('supplier.info',{
@@ -267,6 +310,15 @@ app.controller('orderCtrl',['$scope','$rootScope','$state','$http','$compile','o
 				$scope.status='Unable to load orders. Message:'+error.message;
 			});
 	};
+
+	function getSolved(bool){
+		if(bool==true)
+			return "Solved"
+		else
+			return "Not Solved"
+	}
+
+	$scope.getSolved=getSolved;
 
 	function changeWidth(){
 		var list=$('#orderlist');
@@ -718,6 +770,260 @@ app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams',
 /* 12 */
 /***/ (function(module, exports) {
 
+app.controller('saleOrderCtrl',['$scope','$rootScope','$state','$http','$compile','saleOrderFactory','products',function($scope,$rootScope,$state,$http,$compile,saleOrderFactory,products){
+	var ctrl=this;
+	var orders=[];
+
+	$scope.products=[];
+	$scope.status;
+	$scope.state;
+	$scope.setFunction=null;
+
+	$scope.sort={
+		field:'name',
+		reverse:false
+	}
+
+	function init(){
+		if(!products.hasOwnProperty("name")){
+			$scope.products=products.data;
+		}
+		$scope.getAllOrders();
+		$scope.state=$state.current.name;
+		changeWidth();
+
+	};
+
+	$scope.init=init;
+
+	$scope.setOrder=function(type){
+		if($scope.sort.field==type){
+			$scope.sort.reverse=!$scope.sort.reverse
+		}
+		else{
+			$scope.sort.field=type;
+			$scope.sort.reverse=true;
+		}
+	}
+
+	$scope.addNewLine=function(){
+		var el=$compile("<tr new-item></tr>")($scope);
+		$('#order-product-list').append(el);
+	}
+
+	$scope.$on('product_select',function(ev){
+		$scope.setFunction=ev.targetScope.assignProduct;
+	});
+
+	$scope.$on('createNewLine',function(ev){
+		$scope.addNewLine();
+	})
+
+
+	function convertDate(string){
+		var DateString=string.split('T')[0].split('-');
+		DateString.reverse();
+
+		return DateString.join('-');
+	}
+
+	$scope.convertDate=convertDate;
+
+	$scope.getAllOrders=function(){
+		saleOrderFactory.getAllOrders()
+			.then(function(response){
+				$scope.orders=response.data;
+			},function(error){
+				$scope.status='Unable to load orders. Message:'+error.message;
+			});
+	};
+
+	function changeWidth(){
+		var list=$('#orderlist');
+		if($scope.state=='saleorder.list')
+		{
+			list.width('100%');
+			
+		}
+		else if($scope.state=='saleorder.info'){
+			list.css({'float':'left','width':'25rem'});
+		}
+	};
+
+	$scope.getOrder=function(id){
+		res={};
+		saleOrderFactory.getOrder(id)
+			.then(function(response){
+				res.data=response.data;
+				res.err=false;
+			},function(error){
+				res.err=true;
+				res.txt=error.message;
+			});
+		return res;
+	}
+	$scope.deleteOrder = function(id,index){
+		saleOrderFactory.deleteOrder(id)
+			.then(function(response){
+				$scope.orders.splice(index,1);
+				window.alert('Delete successfully ');
+			},function(error){
+				window.alert('Unable to delete order.\n Error message: '+error.message);
+			});
+	}
+
+	$scope.addProductLine = function(){
+		var container=$("#order-product-list");
+
+	}
+
+
+
+}])
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports) {
+
+app.controller("saleOrderInfoCtrl",['$scope','$rootScope','$state','$stateParams','saleOrderFactory','productFactory','products',function($scope,$rootScope,$state,$stateParams,saleOrderFactory,productFactory,products){
+
+	$scope.saleOrder={};
+	$scope.eOrder={supplierName:''};
+
+	$scope.init= function(){
+		if(!products.hasOwnProperty("name")){
+			$scope.products=products.data;
+		}
+		$scope.getOrder();
+
+		changeWidth();
+		$(document).ready(function(){
+			$('ul.tabs').tabs();
+		});
+	}
+
+	function changeWidth(){
+		var info=$('#sideinfo');
+		info.addClass('inInfo');
+	}
+	$scope.getOrder= function(){
+
+		saleOrderFactory.getOrder($stateParams.orderID)
+			.then(function(res){
+				$scope.saleOrder=res.data.data;
+				$scope.eOrder = jQuery.extend(true, {}, $scope.saleOrder);
+			},function(err){
+				window.warning('Cannot get order.\n Error message: '+ err.message);
+			});
+	};
+
+	function convertDate(string){
+		if (string==null)
+			return '';
+		var DateString=string.split('T')[0].split('-');
+		DateString.reverse();
+
+		return DateString.join('-');
+	}
+
+	$scope.convertDate=convertDate;
+
+	
+	function getProduct(id,att){
+		var ret='Product not exist anymore.';
+		angular.forEach($scope.products, function(product) {
+			if (product._id == id)
+			{
+				if(att=='name')
+					ret=product.name;
+				if(att=='price')
+					ret=product.sellPrice;
+			}
+				
+		});
+		return ret;
+	}
+
+	$scope.getProduct=getProduct;
+
+
+
+	$scope.editOrder= function(){
+		saleOrderFactory.updateOrder($scope.eOrder)
+			.then(function(res){
+				window.alert("Edit successfully.");
+				$scope.getOrder();
+			},function(err){
+				window.warning("Cannot edit order.\n Error message: "+ err.message);
+			});
+	}
+
+	$scope.deleteOrder=function(id){
+	var bool=window.confirm("The order will be deleted permanently. Do you want to proceed?");
+	if(bool==true){
+		saleOrderFactory.deleteOrder(id)
+			.then(function(res){
+				window.alert("Delete successfully.");
+
+				$state.go('saleorder.list');
+			},function(err){
+				window.warning("Cannot delete order. \n Error message: "+err.message);
+				$state.go('order.list');
+			})
+		updateProductAmount('Remove order',1);
+		removeProductOrder();
+	}
+	}
+
+	function updateProductAmount(reason,revert){
+		products=$scope.saleOrder.batch;
+		var err=false;
+		var result=[];
+		var errs=[];
+		angular.forEach(products,function(product){
+			productFactory.updateAmount(product.productID,product.amount*revert,reason)
+				.then(function(res){
+					result.push(res);
+				},function(error){
+					err=true;
+					errs.push(error.message)
+				});
+		})
+		if(err==true){
+			window.warning('Cannot update product\'s stock.\n Error message:' + errs.join('\n'));
+		}
+		else{
+			window.alert('Updated amount successfully!');
+		}
+	}
+
+	function removeProductOrder(){
+		products=$scope.saleOrder.batch;
+		var err=false;
+		var result=[];
+		var errs=[];
+		angular.forEach(products,function(product){
+			productFactory.updateSaleOrder(product._id,$scope.saleOrder._id).then(function(res){
+					result.push(res);
+				},function(error){
+					err=true;
+					errs.push(error.message)
+				});
+		})
+		if(err==true){
+			window.warning('Cannot remove product\'s order.\n Error message:' + errs.join('\n'));
+		}
+		else{
+			window.alert('Updated amount successfully!');
+		}
+	}
+
+}])
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports) {
+
 app.controller('supplierCtrl',['$scope','$rootScope','$state','$http','supplierFactory',function($scope,$rootScope,$state,$http,supplierFactory){
 	var ctrl=this;
 	$scope.suppliers=[];
@@ -793,7 +1099,7 @@ app.controller('supplierCtrl',['$scope','$rootScope','$state','$http','supplierF
 }])
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, exports) {
 
 app.controller("supplierInfoCtrl",['$scope','$rootScope','$state','$stateParams','supplierFactory','orderFactory',function($scope,$rootScope,$state,$stateParams,supplierFactory,orderFactory){
@@ -907,10 +1213,10 @@ app.controller("supplierInfoCtrl",['$scope','$rootScope','$state','$stateParams'
 }])
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports) {
 
-app.directive('addOrder',['supplierFactory','orderFactory',function(supplierFactory,orderFactory){
+app.directive('addOrder',['supplierFactory','orderFactory','selectedProductFactory',function(supplierFactory,orderFactory,selectedProductFactory){
 	return {
 		templateUrl: '../view/detailcontent/order/addOrder.html',
 		replace:true,
@@ -922,6 +1228,7 @@ app.directive('addOrder',['supplierFactory','orderFactory',function(supplierFact
 				$scope.selectSupplier='';
 				$scope.isSolved=false;
 				$('#order-product-list').html('');
+				selectedProductFactory.reset();
 			}
 
 			initiateScope();
@@ -934,7 +1241,7 @@ app.directive('addOrder',['supplierFactory','orderFactory',function(supplierFact
 					{
 						tmp={
 							productID:$(product.children[1].children[0]).attr('productID'),
-							amount:$(product.children[2].children[0]).val()
+							amount:$(product.children[2].children[0]).text()
 						};
 						ret.push(tmp);
 					}
@@ -966,7 +1273,7 @@ app.directive('addOrder',['supplierFactory','orderFactory',function(supplierFact
 }]);
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports) {
 
 app.directive('editOrder',function(){
@@ -980,7 +1287,7 @@ app.directive('editOrder',function(){
 })
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports) {
 
 app.directive('addAdjust',function(){
@@ -994,7 +1301,7 @@ app.directive('addAdjust',function(){
 })
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports) {
 
 app.directive('addProduct',['productFactory',function(productFactory){
@@ -1046,7 +1353,7 @@ app.directive('addProduct',['productFactory',function(productFactory){
 }])
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports) {
 
 app.directive('productEdit',function(){
@@ -1060,7 +1367,7 @@ app.directive('productEdit',function(){
 })
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports) {
 
 app.directive('newItem',['$compile','productFactory','selectedProductFactory',function($compile,productFactory,selectedProductFactory){
@@ -1096,7 +1403,7 @@ app.directive('newItem',['$compile','productFactory','selectedProductFactory',fu
 				var el=$compile("<tr new-item></tr>")(scope.$parent);
 				$(element.parent()[0]).append(el);
 			}
-			scope.assignProduct=function(product){
+			scope.assignProduct=function(product,isSell){
 				console.log(selectedProductFactory.selectedProduct,selectedProductFactory.checkExist(product._id));
 				if (!selectedProductFactory.checkExist(product._id)){
 					if(scope.product_id!=''){
@@ -1111,8 +1418,16 @@ app.directive('newItem',['$compile','productFactory','selectedProductFactory',fu
 					$(element[0].children[1].children[0]).attr('productID',product._id);
 					element[0].children[1].children[0].value=product.name;
 					scope.maxAmount=product.stock;
-					scope.price=product.sellPrice;
-					element[0].children[3].children[0].innerHTML=product.sellPrice;
+					
+					if(isSell==true){
+						element[0].children[3].children[0].innerHTML=product.sellPrice;
+						scope.price=product.sellPrice;
+					}
+					else{
+						element[0].children[3].children[0].innerHTML=product.buyPrice;
+						scope.price=product.buyPrice;
+					}
+					
 				}
 				else{
 					alert("Product already selected!");
@@ -1134,7 +1449,7 @@ app.directive('newItem',['$compile','productFactory','selectedProductFactory',fu
 }]);
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports) {
 
 app.directive('addSupplier',['supplierFactory',function(supplierFactory){
@@ -1178,7 +1493,7 @@ app.directive('addSupplier',['supplierFactory',function(supplierFactory){
 }])
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports) {
 
 app.directive('supplierEdit',function(){
@@ -1192,7 +1507,7 @@ app.directive('supplierEdit',function(){
 })
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports) {
 
 app.directive('appContent',function(){
@@ -1203,7 +1518,7 @@ app.directive('appContent',function(){
 })
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports) {
 
 app.directive('detailContent',function(){
@@ -1215,7 +1530,7 @@ app.directive('detailContent',function(){
 
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports) {
 
 app.directive('headerBar',function(){
@@ -1227,7 +1542,89 @@ app.directive('headerBar',function(){
 
 
 /***/ }),
-/* 25 */
+/* 27 */
+/***/ (function(module, exports) {
+
+app.directive('addSaleOrder',['saleOrderFactory','productFactory','selectedProductFactory',function(saleOrderFactory,productFactory,selectedProductFactory){
+	return {
+		templateUrl: '../view/detailcontent/saleorder/addOrder.html',
+		replace:true,
+		link:function($scope, element, attrs){
+			$('.modal').modal();
+			
+			function initiateScope(){
+				$scope.name='';
+				$scope.isSolved=false;
+				$('#order-product-list').html('');
+				selectedProductFactory.reset();
+			}
+
+			initiateScope();
+
+			function getProductList(container){
+				var products=container[0].children;
+				var ret=[]
+				var price=0;
+				angular.forEach(products,function(product){
+					if((product.children[1].children[0]).hasAttribute('productid'))
+					{
+						tmp={
+							productID:$(product.children[1].children[0]).attr('productID'),
+							amount:$(product.children[2].children[0]).val()
+						};
+						ret.push(tmp);
+						price+=parseInt($(product.children[4].children[0]).text());
+					}
+				});
+				return [ret,price];
+			}
+
+			function updateProductAmount(reason,revert,products){
+				var err=false;
+				var result=[];
+				var errs=[];
+				angular.forEach(products,function(product){
+					productFactory.updateAmount(product.productID,product.amount*revert,reason)
+						.then(function(res){
+							result.push(res);
+						},function(error){
+							err=true;
+							errs.push(error.message)
+						});
+				})
+				if(err==true){
+					window.warning('Cannot update product\'s stock.\n Error message:' + errs.join('\n'));
+				}
+				else{
+					window.alert('Updated amount successfully!');
+				}
+			}
+
+			$scope.addOrder = function(){
+				tmp=getProductList($('#order-product-list'))
+				newOrder={
+					name:$scope.name,
+					batch:tmp[0],
+					price:tmp[1]
+				};
+				updateProductAmount("Sale Order",-1,newOrder.batch);
+				saleOrderFactory.addOrder(newOrder).then(function(response){
+					$scope.getAllOrders();
+					initiateScope();
+					window.alert('Add '+ $scope.name +' successfully');
+					//$scope.orders.push(response.data)
+				},function(error){
+					window.alert("Cannot add " + $scope.name+"\nError message: "+error.message);
+				});
+				$('#addForm').modal('close');
+				return false;
+			}
+		}
+	}
+}]);
+
+/***/ }),
+/* 28 */
 /***/ (function(module, exports) {
 
 app.directive('sideBar',function(){
@@ -1239,7 +1636,7 @@ app.directive('sideBar',function(){
 
 
 /***/ }),
-/* 26 */
+/* 29 */
 /***/ (function(module, exports) {
 
 app.directive('uiSrefActiveIf', ['$state', function($state) {
@@ -1263,7 +1660,7 @@ app.directive('uiSrefActiveIf', ['$state', function($state) {
 }])
 
 /***/ }),
-/* 27 */
+/* 30 */
 /***/ (function(module, exports) {
 
 app.factory('orderFactory',['$http',function($http){
@@ -1298,7 +1695,7 @@ app.factory('orderFactory',['$http',function($http){
 }])
 
 /***/ }),
-/* 28 */
+/* 31 */
 /***/ (function(module, exports) {
 
 app.factory('productFactory',['$http',function($http){
@@ -1332,12 +1729,47 @@ app.factory('productFactory',['$http',function($http){
 	productFactory.updateOrder = function(id,orderID){
 		return $http.put(urlBase+"/order/"+id,{orderID:orderID});
 	}
+	productFactory.updateSaleOrder = function(id,orderID){
+		return $http.put(urlBase+"/saleorder/"+id,{orderID:orderID});
+	}
 
 	return productFactory;
 }])
 
 /***/ }),
-/* 29 */
+/* 32 */
+/***/ (function(module, exports) {
+
+app.factory('saleOrderFactory',['$http',function($http){
+	var saleOrderFactory={};
+	var urlBase='/api/saleorders';
+
+	saleOrderFactory.getAllOrders = function(){
+		return $http.get(urlBase);
+	};
+
+	saleOrderFactory.getOrder = function(id){
+		return $http.get(urlBase+'/'+id);
+	};
+
+	saleOrderFactory.addOrder = function(order){
+		return $http.post(urlBase,order);
+	};
+
+	saleOrderFactory.updateOrder = function(order){
+		return $http.put(urlBase+'/'+order._id,order);
+	};
+
+	saleOrderFactory.deleteOrder = function(id){
+		return $http.delete(urlBase+'/'+id);
+	};
+
+	
+	return saleOrderFactory;
+}])
+
+/***/ }),
+/* 33 */
 /***/ (function(module, exports) {
 
 app.factory('selectedProductFactory',[function(){
@@ -1374,7 +1806,7 @@ app.factory('selectedProductFactory',[function(){
 }]);
 
 /***/ }),
-/* 30 */
+/* 34 */
 /***/ (function(module, exports) {
 
 app.factory('supplierFactory',['$http',function($http){
@@ -1413,10 +1845,6 @@ app.factory('supplierFactory',['$http',function($http){
 }])
 
 /***/ }),
-/* 31 */,
-/* 32 */,
-/* 33 */,
-/* 34 */,
 /* 35 */,
 /* 36 */,
 /* 37 */,
@@ -1426,7 +1854,11 @@ app.factory('supplierFactory',['$http',function($http){
 /* 41 */,
 /* 42 */,
 /* 43 */,
-/* 44 */
+/* 44 */,
+/* 45 */,
+/* 46 */,
+/* 47 */,
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 angular = __webpack_require__(0);
@@ -1441,4 +1873,4 @@ __webpack_require__(3);
 
 
 /***/ })
-],[44]);
+],[48]);

@@ -1,0 +1,19 @@
+<div style='display:none'>
+	<td>
+		<textarea style='resize:none;height:2rem' rows='1' class= 'dropdown-button' data-activates='product_dropdown' ng-click='chooseItem()'></textarea>
+	</td>
+	<td>
+		<form name='myForm'>
+			<input name='stockAmount' type='number' ng-blur='initAmount()' class='table-input' class='amount-span' ng-model='amount'></textarea>
+		</form>
+	</td>
+	<td>
+		<span class='rate-span'>0</span>
+	</td>
+	<td>
+		<span class='price-span'>{{price*amount}}</span>
+	</td>
+	<td>
+		<i ng-click='deleteProductLine()' class="fa fa-times" aria-hidden="true"></i>
+	</td>
+</div>

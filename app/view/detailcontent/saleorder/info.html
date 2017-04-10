@@ -1,0 +1,68 @@
+<div id='order-info' class='row' ng-init='init()'>
+	<div id='order-info-content'>
+		<div class='info-title'>
+			<span style='font-size:26px'>{{saleOrder.name}}</span>
+
+			<button class='action-button btn remove-btn icon-btn close-btn' ui-sref='saleorder.list'>
+				<i class="fa fa-times" aria-hidden="true" style='font-size:2rem'></i>
+			</button>
+
+			<button class='action-button btn remove-btn icon-btn waves-effect waves-light' ng-click='deleteOrder(saleOrder._id)'>
+				<i class="fa fa-trash" aria-hidden="true"></i>
+			</button>
+
+		</div>
+		<edit-sale-order></edit-sale-order>
+		<div class= 'row' style='border-bottom:1px solid #BFAFAF;'>
+			<div class='col s12'>
+				<ul class="tabs">
+					<li class="tab col s3"><a>Overview</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class='info-window' class='col s12'>
+			<div class='row' style='padding-left:1rem;margin-bottom:0px;margin-top:-5px'>
+			<h5>Info</h5>
+			</div>
+			<div class='row'>
+				<label class='col s6' style='font-size:0.9rem'>Price</label>
+				<span class='col s6'>{{saleOrder.price}} VND</span>
+			</div>
+			<div class='row'>
+				<label class='col s6' style='font-size:0.9rem'>Date Created</label>
+				<span class='col s6'>{{convertDate(saleOrder.createdAt)}}</span>
+			</div>
+		</div>
+		<div class='product-list'>
+			<div clas='row' style='padding-left:1rem;padding-bottom:1.5rem'>
+				<h5>Product's List</h5>
+			</div>
+			<div class='title-cell'>
+				<div class='row' style='margin-bottom:0'>
+					<div class='col s5'>
+						<span>Product</span>
+					</div>
+					<div class='col s3'>
+						<span>Amount</span>
+					</div>
+					<div class='col s4'>
+						<span>Price</span>
+					</div>
+				</div>
+			</div>
+			<div ng-repeat='product in saleOrder.batch'>
+				<div class='row item-cell col s12' style='margin-bottom:0;padding-left:0px'>
+					<div class='col s5'>
+						<span>{{getProduct(product.productID,'name')}}</span>
+					</div>
+					<div class='col s3'>
+						<span>{{product.amount}}</span>
+					</div>
+					<div class='col s4'>
+						<span>{{product.amount*getProduct(product.productID,'price')}}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -17,3 +17,23 @@
 .picker__date-display{
 	display:none;
 }
+
+#sideinfo{
+	min-width:40rem;
+	overflow:scroll;
+}
+
+#orderlist{
+	height:100%;
+}
+
+#supplierlist{
+	height:100%;
+}
+
+@media (max-width:992px){
+	.detail_content{
+		width:100%!important;
+		left:0px!important;
+	}
+}

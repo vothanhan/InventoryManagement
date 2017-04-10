@@ -5,3 +5,5 @@ require('./supplierCtrl');
 require('./supplierInfoCtrl');
 require('./orderCtrl');
 require('./orderInfoCtrl');
+require('./saleOrderCtrl');
+require('./saleOrderInfoCtrl');

@@ -6,7 +6,7 @@ app.config(function($stateProvider,$urlRouterProvider,$locationProvider){
 	});
 	$stateProvider.state('product',{
 		url:'/product',
-		template: '<div ui-view="itemlist" id="itemlist"></div><div ui-view="sideinfo" id="sideinfo"></div>',
+		template: '<div ui-view="itemlist" id="itemlist"></div><div ui-view="sideinfo" id="sideinfo" ></div>',
 		abstract:true
 	})
 		.state('product.list',{
@@ -17,7 +17,7 @@ app.config(function($stateProvider,$urlRouterProvider,$locationProvider){
 					templateUrl:"../view/detailcontent/product/list.html"
 				},
 				"sideinfo":{
-					template:""
+					template:"<div style='display:none'></div>"
 				}
 			}
 		}).state('product.info',{
@@ -45,7 +45,7 @@ app.config(function($stateProvider,$urlRouterProvider,$locationProvider){
 					templateUrl:"../view/detailcontent/order/list.html"
 				},
 				"sideinfo":{
-					template:""
+					template:"<div style='display:none'></div>"
 				}
 			},
 			resolve:{
@@ -77,6 +77,44 @@ app.config(function($stateProvider,$urlRouterProvider,$locationProvider){
 				}
 			}
 		});
+	$stateProvider.state('saleorder',{
+		url:'/saleorder',
+		template: '<div ui-view="orderlist" id="orderlist"></div><div ui-view="sideinfo" id="sideinfo"></div>',
+		abstract:true
+	}).state('saleorder.list',{
+			url:'/list',
+			views:{
+				"orderlist":{
+					controller:'saleOrderCtrl',
+					templateUrl:"../view/detailcontent/saleorder/list.html"
+				},
+				"sideinfo":{
+					template:"<div style='display:none'></div>"
+				}
+			},
+			resolve:{
+				products: function(productFactory){
+					return productFactory.getAllProducts();
+				}
+			}
+		}).state('saleorder.info',{
+			url:'/{orderID}',
+			views:{
+				"orderlist":{
+					controller:'saleOrderCtrl',
+					templateUrl:"../view/detailcontent/saleorder/list.html"
+				},
+				"sideinfo":{
+					templateUrl:"../view/detailcontent/saleorder/info.html",
+					controller:'saleOrderInfoCtrl'
+				}
+			},
+			resolve:{
+				products: function(productFactory){
+					return productFactory.getAllProducts();
+				}
+			}
+		});
 	$stateProvider.state('report',{
 		url:'/report',
 		template: '<h1>Hello Report!!!</h1>'
@@ -93,7 +131,7 @@ app.config(function($stateProvider,$urlRouterProvider,$locationProvider){
 					templateUrl:"../view/detailcontent/supplier/list.html"
 				},
 				"sideinfo":{
-					template:""
+					template:"<div style='display:none'></div>"
 				}
 			}
 		}).state('supplier.info',{

@@ -1,7 +1,7 @@
-app.controller('orderCtrl',['$scope','$rootScope','$state','$http','$compile','orderFactory','supplierFactory','suppliers','products',function($scope,$rootScope,$state,$http,$compile,orderFactory,supplierFactory,suppliers,products){
+app.controller('saleOrderCtrl',['$scope','$rootScope','$state','$http','$compile','saleOrderFactory','products',function($scope,$rootScope,$state,$http,$compile,saleOrderFactory,products){
 	var ctrl=this;
 	var orders=[];
-	var suppliers=suppliers;
+
 	$scope.products=[];
 	$scope.status;
 	$scope.state;
@@ -11,13 +11,8 @@ app.controller('orderCtrl',['$scope','$rootScope','$state','$http','$compile','o
 		field:'name',
 		reverse:false
 	}
-	$scope.assignProduct=function(){
-		console.log("IN");
-	}
+
 	function init(){
-		if(!suppliers.hasOwnProperty("name")){
-			$scope.suppliers=suppliers.data;
-		}
 		if(!products.hasOwnProperty("name")){
 			$scope.products=products.data;
 		}
@@ -62,29 +57,8 @@ app.controller('orderCtrl',['$scope','$rootScope','$state','$http','$compile','o
 
 	$scope.convertDate=convertDate;
 
-	function getAllSuppliers(){
-		supplierFactory.getAllSuppliers()
-			.then(function(response){
-				$scope.suppliers=response.data;
-			},function(error){
-				$scope.status='Unable to load suppliers. Message:'+error.message;
-			});
-	};
-	$scope.getAllSuppliers=getAllSuppliers
-	
-	function getSupplierName(id){
-		var sname='A';
-		angular.forEach($scope.suppliers, function(supplier) {
-			if (supplier._id == id)
-				sname=supplier.name;
-		});
-		return sname;
-	};
-
-	$scope.getSupplierName = getSupplierName;
-
 	$scope.getAllOrders=function(){
-		orderFactory.getAllOrders()
+		saleOrderFactory.getAllOrders()
 			.then(function(response){
 				$scope.orders=response.data;
 			},function(error){
@@ -92,30 +66,21 @@ app.controller('orderCtrl',['$scope','$rootScope','$state','$http','$compile','o
 			});
 	};
 
-	function getSolved(bool){
-		if(bool==true)
-			return "Solved"
-		else
-			return "Not Solved"
-	}
-
-	$scope.getSolved=getSolved;
-
 	function changeWidth(){
 		var list=$('#orderlist');
-		if($scope.state=='order.list')
+		if($scope.state=='saleorder.list')
 		{
 			list.width('100%');
 			
 		}
-		else if($scope.state=='order.info'){
+		else if($scope.state=='saleorder.info'){
 			list.css({'float':'left','width':'25rem'});
 		}
 	};
 
 	$scope.getOrder=function(id){
 		res={};
-		orderFactory.getOrder(id)
+		saleOrderFactory.getOrder(id)
 			.then(function(response){
 				res.data=response.data;
 				res.err=false;
@@ -126,7 +91,7 @@ app.controller('orderCtrl',['$scope','$rootScope','$state','$http','$compile','o
 		return res;
 	}
 	$scope.deleteOrder = function(id,index){
-		orderFactory.deleteOrder(id)
+		saleOrderFactory.deleteOrder(id)
 			.then(function(response){
 				$scope.orders.splice(index,1);
 				window.alert('Delete successfully ');
@@ -139,5 +104,7 @@ app.controller('orderCtrl',['$scope','$rootScope','$state','$http','$compile','o
 		var container=$("#order-product-list");
 
 	}
+
+
 
 }])

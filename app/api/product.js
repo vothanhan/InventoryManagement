@@ -159,6 +159,20 @@ module.exports = function(exrouter){
 				}
 			});
 		res.json(response);
-	})
+	});
+
+	router.route("/api/items/saleorder/:id").put(function(req,res){
+		response={};
+		Product.update({_id:req.params.id},{$pull:{sellHistory:{orderID:req.body.orderID}}},{new:true},function(err,model){
+				if(err){
+					console.log(err);
+					response={'error':true,'data':err};
+				}
+				else{
+					response={'error':false,'data':'Update success'};
+				}
+			});
+		res.json(response);
+	});
 };
 

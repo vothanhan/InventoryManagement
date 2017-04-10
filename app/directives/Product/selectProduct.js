@@ -31,7 +31,7 @@ app.directive('newItem',['$compile','productFactory','selectedProductFactory',fu
 				var el=$compile("<tr new-item></tr>")(scope.$parent);
 				$(element.parent()[0]).append(el);
 			}
-			scope.assignProduct=function(product){
+			scope.assignProduct=function(product,isSell){
 				console.log(selectedProductFactory.selectedProduct,selectedProductFactory.checkExist(product._id));
 				if (!selectedProductFactory.checkExist(product._id)){
 					if(scope.product_id!=''){
@@ -46,8 +46,16 @@ app.directive('newItem',['$compile','productFactory','selectedProductFactory',fu
 					$(element[0].children[1].children[0]).attr('productID',product._id);
 					element[0].children[1].children[0].value=product.name;
 					scope.maxAmount=product.stock;
-					scope.price=product.sellPrice;
-					element[0].children[3].children[0].innerHTML=product.sellPrice;
+					
+					if(isSell==true){
+						element[0].children[3].children[0].innerHTML=product.sellPrice;
+						scope.price=product.sellPrice;
+					}
+					else{
+						element[0].children[3].children[0].innerHTML=product.buyPrice;
+						scope.price=product.buyPrice;
+					}
+					
 				}
 				else{
 					alert("Product already selected!");

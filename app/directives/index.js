@@ -13,5 +13,6 @@ require("./Supplier/addSupplier");
 require("./Supplier/editSupplier");
 require("./Order/addOrder");
 require("./Order/editOrder");
+require("./saleOrder/addOrder");
 
 

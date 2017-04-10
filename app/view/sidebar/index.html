@@ -10,13 +10,18 @@
 		</div>
 	</li>
 	<li>
-		<div class='sidebar-item' ui-sref='supplier.list' ui-sref-active='active'>
+		<div class='sidebar-item' ui-sref='supplier.list' ui-sref-active-if='supplier'>
 			<a><strong>Supplier</strong></a>
 		</div>
 	</li>
 	<li>
-		<div class='sidebar-item' ui-sref='order.list' ui-sref-active='active'>
-			<a><strong>Order</strong></a>
+		<div class='sidebar-item' ui-sref='order.list' ui-sref-active-if='order'>
+			<a><strong>Purchase Order</strong></a>
+		</div>
+	</li>
+	<li>
+		<div class='sidebar-item' ui-sref='saleorder.list' ui-sref-active-if='saleorder'>
+			<a><strong>Sale Order</strong></a>
 		</div>
 	</li>
 	<li>

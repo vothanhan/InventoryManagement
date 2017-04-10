@@ -18,8 +18,6 @@ module.exports = mongoose.model('Product',{
 	}]
 	,
 	sellHistory: [{
-		amount: Number,
-		reason: String,
-		date: Date
+		orderID:String
 	}]
 })

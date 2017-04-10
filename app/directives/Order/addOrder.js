@@ -1,4 +1,4 @@
-app.directive('addOrder',['supplierFactory','orderFactory',function(supplierFactory,orderFactory){
+app.directive('addOrder',['supplierFactory','orderFactory','selectedProductFactory',function(supplierFactory,orderFactory,selectedProductFactory){
 	return {
 		templateUrl: '../view/detailcontent/order/addOrder.html',
 		replace:true,
@@ -10,6 +10,7 @@ app.directive('addOrder',['supplierFactory','orderFactory',function(supplierFact
 				$scope.selectSupplier='';
 				$scope.isSolved=false;
 				$('#order-product-list').html('');
+				selectedProductFactory.reset();
 			}
 
 			initiateScope();
@@ -22,7 +23,7 @@ app.directive('addOrder',['supplierFactory','orderFactory',function(supplierFact
 					{
 						tmp={
 							productID:$(product.children[1].children[0]).attr('productID'),
-							amount:$(product.children[2].children[0]).val()
+							amount:$(product.children[2].children[0]).text()
 						};
 						ret.push(tmp);
 					}
