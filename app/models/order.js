@@ -6,7 +6,8 @@ var schema= new mongoose.Schema({
 		productID: String,
 		amount: Number
 	}],
-	isSolved:Boolean
+	isSolved:Boolean,
+	price: Number
 },{timestamps:true});
 
 module.exports = mongoose.model('Order',schema);

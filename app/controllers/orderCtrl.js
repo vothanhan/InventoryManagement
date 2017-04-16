@@ -35,7 +35,7 @@ app.controller('orderCtrl',['$scope','$rootScope','$state','$http','$compile','o
 		}
 		else{
 			$scope.sort.field=type;
-			$scope.sort.reverse=true;
+			$scope.sort.reverse=false;
 		}
 	}
 

@@ -105,7 +105,7 @@ module.exports = function(exrouter){
 		if(req.body.remove==true){
 			Supplier.update({_id:req.params.id},{$pull:{transaction:{orderID:req.body.orderID}}},function(err){
 				if(err){
-					response={error:true,data:error};
+					response={error:true,data:err};
 				}
 				else{
 					response={error:false,data:"Success"};
@@ -115,7 +115,7 @@ module.exports = function(exrouter){
 		else{
 			Supplier.update({_id:req.params.id},{$push:{transaction:{orderID:req.body.orderID}}},function(err){
 				if(err){
-					response={error:true,data:error};
+					response={error:true,data:err};
 				}
 				else{
 					response={error:false,data:"Success"};

@@ -27,6 +27,7 @@
 					<li class="tab col s3" ng-click='selectTabs(0)'><a>Overview</a></li>
 					<li class="tab col s3" ng-click='selectTabs(1)'><a>Adjustment</a></li>
 					<li class="tab col s3" ng-click='selectTabs(2)'><a>Purchase</a></li>
+					<li class="tab col s3" ng-click='selectTabs(3)'><a>Sale</a></li>
 				</ul>
 			</div>
 		</div>
@@ -125,6 +126,37 @@
 						<span>{{order.stat}}</span>
 					</div>
 					<div class='col s3'>
+						<span>{{convertDate(order.createdAt)}}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class='sale-order' ng-show="selectTab==3">
+			<div class='title-cell'>
+				<div class='row' style='margin-bottom:0'>
+					<div class='col s5'>
+						<span>Order</span>
+					</div>
+					<div class='col s3'>
+						<span>Amount</span>
+					</div>
+					<div class='col s4'>
+						<span>Date</span>
+					</div>
+				</div>
+			</div>
+			<div ng-show="sellHistory.length==0" style='text-align:center'>
+				<span>No order yet.</span>
+			</div>
+			<div ng-repeat='order in sellHistory'>
+				<div class='row item-cell col s12' style='margin-bottom:0;padding-left:0px'>
+					<div class='col s5' ui-sref='order.info({orderID:order._id})'>
+						<span style='color:#206ec5'>{{order.name}}</span>
+					</div>
+					<div class='col s3'>
+						<span>{{order.amount}}</span>
+					</div>
+					<div class='col s4'>
 						<span>{{convertDate(order.createdAt)}}</span>
 					</div>
 				</div>

@@ -14,5 +14,6 @@ require("./Supplier/editSupplier");
 require("./Order/addOrder");
 require("./Order/editOrder");
 require("./saleOrder/addOrder");
+require("./report/selectReport");
 
 

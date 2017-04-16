@@ -30,7 +30,7 @@ app.controller('saleOrderCtrl',['$scope','$rootScope','$state','$http','$compile
 		}
 		else{
 			$scope.sort.field=type;
-			$scope.sort.reverse=true;
+			$scope.sort.reverse=false;
 		}
 	}
 

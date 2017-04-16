@@ -37,7 +37,8 @@ app.directive('addSaleOrder',['saleOrderFactory','productFactory','selectedProdu
 				var result=[];
 				var errs=[];
 				angular.forEach(products,function(product){
-					productFactory.updateAmount(product.productID,product.amount*revert,reason)
+					var stock=getStock($scope.products,product.productID);
+					productFactory.updateAmount(product.productID,product.amount*revert,reason,stock)
 						.then(function(res){
 							result.push(res);
 						},function(error){
@@ -51,6 +52,16 @@ app.directive('addSaleOrder',['saleOrderFactory','productFactory','selectedProdu
 				else{
 					window.alert('Updated amount successfully!');
 				}
+			}
+
+			function getStock(products,id){
+				var ret=0;
+				angular.forEach(products,function(product){
+					if (product._id==id){
+						ret= product.stock;
+					}
+				})
+				return ret;
 			}
 
 			$scope.addOrder = function(){

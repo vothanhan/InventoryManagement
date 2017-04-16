@@ -7,3 +7,4 @@ require('./orderCtrl');
 require('./orderInfoCtrl');
 require('./saleOrderCtrl');
 require('./saleOrderInfoCtrl');
+require('./reportCtrl');

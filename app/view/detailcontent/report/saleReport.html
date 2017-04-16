@@ -1,0 +1,63 @@
+<div id='report-content'>
+	<div id='top-bar' class='row'>
+		<select-report></select-report>
+		<div class='input-field col s2'>
+			<select class='browser-default col s12' data-ng-model='sort.field'>
+				<option value="" disabled selected>Order by</option>
+				<option value="name">Name</option>
+				<option value="price">Amount</option>
+				<option value="createdAt">Created Date</option>
+			</select>
+		</div>
+		<div class='input-field col s2'>
+			<input name='sdate' type='date' class='datepicker date-box' id='sdate'>
+		</div>
+		<div class='input-field col s2'>
+			<input name='edate' type='date' class='datepicker date-box' id='edate'>
+		</div>
+		<div class='input-field col s2'>
+			<button class='btn word-btn' ng-click='setDate("sale")'>
+				Reload
+			</button>
+		</div>
+	</div>
+	<div id='report-detail'>
+		<div class='row' style='text-align:center'>
+			<h4>Sale Report</h4>
+		</div>
+		<div class='row' style='text-align:center'>
+			<p>From: {{sdate}} To: {{edate}}</p>
+		</div>
+		<div id='arr-list'>
+			<div class='listing-header row'>
+				<div class='col cell s5' style='text-align:left' ng-click='setOrder("name")'>
+					<span>Name</span>
+				</div>
+				<div class='col s3 cell' style='text-align:right' ng-click='setOrder("price")'>
+					<span>Amount</span>
+				</div>
+				<div class='col s4 cell' style='text-align:right' ng-click='setOrder("createdAt")'>
+					<span>Created Date</span>
+				</div>
+			</div>
+			<div ng-show="arr.length==0" style='text-align:center'>
+				<span>No sale.</span>
+			</div>
+			<div class='listing-item' ng-repeat='item in arr|orderBy:sort.field:sort.reverse'>
+				<div class='product-container'>
+					<div>
+						<div class='col cell s5' style='text-align:left' ui-sref='order.info({orderID:item._id})'>
+							<span>{{item.name}}</span>
+						</div>
+						<div class='col s3 cell' style='text-align:right'>
+							<span>{{item.price}} VND</span>
+						</div>
+						<div class='col s4 cell' style='text-align:right'>
+							<span>{{convertDate(item.createdAt)}}</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

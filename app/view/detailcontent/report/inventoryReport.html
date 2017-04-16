@@ -1,0 +1,73 @@
+<div id='report-content'>
+	<div id='top-bar' class='row'>
+		<select-report></select-report>
+		<div class='input-field col s2'>
+			<select class='browser-default col s12' data-ng-model='sort.field'>
+				<option value="" disabled selected>Order by</option>
+				<option value="name">Name</option>
+				<option value="price">Amount</option>
+				<option value="createdAt">Created Date</option>
+			</select>
+		</div>
+		<div class='input-field col s2'>
+			<input name='edate' type='date' class='datepicker date-box' id='edate'>
+		</div>
+		<div class='input-field col s2'>
+			<button class='btn word-btn' ng-click='setDate("inventory")'>
+				Reload
+			</button>
+		</div>
+	</div>
+	<div id='report-detail'>
+		<div class='row' style='text-align:center'>
+			<h4>Inventory Report</h4>
+		</div>
+		<div class='row' style='text-align:center'>
+			<p>To: {{edate}}</p>
+		</div>
+		<div id='arr-list'>
+			<div class='listing-header row'>
+				<div class='col cell s4' style='text-align:left' ng-click='setOrder("name")'>
+					<span>Name</span>
+				</div>
+				<div class='col s2 cell' style='text-align:left'>
+					<span>Unit</span>
+				</div>
+				<div class='col s2 cell' style='text-align:right'>
+					<span>Quantity In</span>
+				</div>
+				<div class='col s2 cell' style='text-align:right'>
+					<span>Quantity Out</span>
+				</div>
+				<div class='col s2 cell' style='text-align:right'>
+					<span>Remaining</span>
+				</div>
+			</div>
+			<div ng-show="arr.length==0" style='text-align:center'>
+				<span>No sale.</span>
+			</div>
+			<div class='listing-item' ng-repeat='item in arr|orderBy:sort.field:sort.reverse'>
+				<div class='product-container'>
+					<div>
+						<div class='col cell s4' style='text-align:left' ui-sref='order.info({orderID:item._id})'>
+							<span>{{item.name}}</span>
+						</div>
+						<div class='col s2 cell' style='text-align:left'>
+							<span>{{item.itemType}} VND</span>
+						</div>
+						<div class='col s2 cell' style='text-align:right'>
+							<span>{{getQuantity(item.changeHistory,true)}}</span>
+						</div>
+						<div class='col s2 cell' style='text-align:right'>
+							<span>{{getQuantity(item.changeHistory,false)}}</span>
+						</div>
+						<div class='col s2 cell' style='text-align:right'>
+							<i class="fa fa-exclamation-triangle" ng-show="getRemaining(item.changeHistory)<=item.restockAmount" title='Remaining amount below restock level' aria-hidden="true"></i>
+							<span>{{getRemaining(item.changeHistory)}}</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

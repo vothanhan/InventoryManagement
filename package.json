@@ -2,15 +2,15 @@
   "name": "inventoryManagement",
   "main": "server.js",
   "dependencies": {
-    "body-parser": "^1.17.1",
-    "css-loader": "^0.27.3",
-    "express": "^4.15.2",
-    "jquery": "^3.2.0",
-    "method-override": "^2.3.7",
-    "moment": "^2.18.1",
-    "mongoose": "^4.9.0",
-    "node-sass": "^4.5.0",
-    "style-loader": "^0.14.1",
-    "webpack": "^2.2.1"
+    "body-parser": "*",
+    "css-loader": "*",
+    "express": "*",
+    "jquery": "*",
+    "method-override": "*",
+    "moment": "*",
+    "mongoose": "*",
+    "node-sass": "*",
+    "style-loader": "*",
+    "webpack": "*"
   }
 }

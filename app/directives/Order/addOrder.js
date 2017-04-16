@@ -17,27 +17,32 @@ app.directive('addOrder',['supplierFactory','orderFactory','selectedProductFacto
 
 			function getProductList(container){
 				var products=container[0].children;
-				var ret=[]
+				var ret=[];
+				var total=0;
 				angular.forEach(products,function(product){
 					if((product.children[1].children[0]).hasAttribute('productid'))
 					{
 						tmp={
 							productID:$(product.children[1].children[0]).attr('productID'),
-							amount:$(product.children[2].children[0]).text()
+							amount:$(product.children[2].children[0]).val()
 						};
+						total+=parseInt($(product.children[4].children[0]).text());
 						ret.push(tmp);
 					}
 				});
-				return ret;
+				return [ret,total];
 			}
 
 			$scope.addOrder = function(){
+				var batch=getProductList($('#order-product-list'))
 				newOrder={
 					name:$scope.name,
 					supplierName:$scope.selectSupplier._id,
-					batch:getProductList($('#order-product-list')),
+					batch:batch[0],
+					price:batch[1],
 					isSolved:$scope.isSolved,
 				};
+				console.log(newOrder);
 				orderFactory.addOrder(newOrder).then(function(response){
 					orderFactory.updateSupplier(response.data.data._id,$scope.selectSupplier._id);
 					$scope.getAllOrders();

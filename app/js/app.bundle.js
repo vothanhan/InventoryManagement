@@ -7,12 +7,13 @@ webpackJsonp([0],[
 
 __webpack_require__(10);
 __webpack_require__(11);
-__webpack_require__(14);
 __webpack_require__(15);
+__webpack_require__(16);
 __webpack_require__(8);
 __webpack_require__(9);
-__webpack_require__(12);
 __webpack_require__(13);
+__webpack_require__(14);
+__webpack_require__(12);
 
 /***/ }),
 /* 2 */
@@ -21,20 +22,21 @@ __webpack_require__(13);
 "use strict";
 
 
-__webpack_require__(26);
-__webpack_require__(24);
-__webpack_require__(28);
-__webpack_require__(25);
-__webpack_require__(29);
-__webpack_require__(19);
-__webpack_require__(18);
-__webpack_require__(21);
-__webpack_require__(20);
-__webpack_require__(22);
-__webpack_require__(23);
-__webpack_require__(16);
-__webpack_require__(17);
 __webpack_require__(27);
+__webpack_require__(25);
+__webpack_require__(30);
+__webpack_require__(26);
+__webpack_require__(31);
+__webpack_require__(20);
+__webpack_require__(19);
+__webpack_require__(22);
+__webpack_require__(21);
+__webpack_require__(23);
+__webpack_require__(24);
+__webpack_require__(17);
+__webpack_require__(18);
+__webpack_require__(29);
+__webpack_require__(28);
 
 
 
@@ -43,11 +45,12 @@ __webpack_require__(27);
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(31);
-__webpack_require__(34);
-__webpack_require__(30);
-__webpack_require__(32);
 __webpack_require__(33);
+__webpack_require__(37);
+__webpack_require__(32);
+__webpack_require__(35);
+__webpack_require__(36);
+__webpack_require__(34);
 
 
 /***/ }),
@@ -60,6 +63,7 @@ app.config(function($stateProvider,$urlRouterProvider,$locationProvider){
 		url:'/dashboard',
 		template: '<h1>Hello World!!!</h1>'
 	});
+
 	$stateProvider.state('product',{
 		url:'/product',
 		template: '<div ui-view="itemlist" id="itemlist"></div><div ui-view="sideinfo" id="sideinfo" ></div>',
@@ -171,10 +175,48 @@ app.config(function($stateProvider,$urlRouterProvider,$locationProvider){
 				}
 			}
 		});
+
 	$stateProvider.state('report',{
 		url:'/report',
-		template: '<h1>Hello Report!!!</h1>'
+		templateUrl: '../view/detailcontent/report/index.html',
+		controller:function($scope,$state){
+			$scope.$on("$stateChangeStart",function(){
+				document.getElementById('selectReportScreen').style.display='';
+			})
+			var currentDate=new Date();
+			$scope.sdate='01-'+(currentDate.getMonth()+1)+'-'+(currentDate.getFullYear());
+			var lastDate=new Date(currentDate.getFullYear(),currentDate.getMonth()+1,0);
+			$scope.edate=''+lastDate.getDate()+'-'+(currentDate.getMonth()+1)+'-'+(currentDate.getFullYear());
+		}
+	}).state('report.sale',{
+		url:'/sale/{sdate}/{edate}',
+		templateUrl:'../view/detailcontent/report/saleReport.html',
+		controller:'reportCtrl',
+		resolve:{
+			suppliers: function(supplierFactory){
+					return supplierFactory.getAllSuppliers();
+				},
+		}
+	}).state('report.order',{
+		url:'/order/{sdate}/{edate}',
+		templateUrl:'../view/detailcontent/report/orderReport.html',
+		controller:'reportCtrl',
+		resolve:{
+			suppliers: function(supplierFactory){
+					return supplierFactory.getAllSuppliers();
+				},
+		}
+	}).state('report.inventory',{
+		url:'/inventory/{edate}',
+		templateUrl:'../view/detailcontent/report/inventoryReport.html',
+		controller:'reportCtrl',
+		resolve:{
+			suppliers: function(supplierFactory){
+					return supplierFactory.getAllSuppliers();
+				},
+		}
 	});
+
 	$stateProvider.state('supplier',{
 		url:'/supplier',
 		template: '<div ui-view="supplierlist" id="supplierlist"></div><div ui-view="sideinfo" id="sideinfo"></div>',
@@ -254,7 +296,7 @@ app.controller('orderCtrl',['$scope','$rootScope','$state','$http','$compile','o
 		}
 		else{
 			$scope.sort.field=type;
-			$scope.sort.reverse=true;
+			$scope.sort.reverse=false;
 		}
 	}
 
@@ -505,8 +547,10 @@ app.controller("orderInfoCtrl",['$scope','$rootScope','$state','$stateParams','o
 		var err=false;
 		var result=[];
 		var errs=[];
+
 		angular.forEach(products,function(product){
-			productFactory.updateAmount(product.productID,product.amount*revert,reason)
+			var stock=getStock($scope.products,product.productID);
+			productFactory.updateAmount(product.productID,product.amount*revert,reason,stock)
 				.then(function(res){
 					result.push(res);
 				},function(error){
@@ -522,13 +566,23 @@ app.controller("orderInfoCtrl",['$scope','$rootScope','$state','$stateParams','o
 		}
 	}
 
+	function getStock(products,id){
+		var ret=0;
+		angular.forEach(products,function(product){
+			if (product._id==id){
+				ret= product.stock;
+			}
+		})
+		return ret;
+	}
+
 	function removeProductOrder(){
 		products=$scope.purchaseOrder.batch;
 		var err=false;
 		var result=[];
 		var errs=[];
 		angular.forEach(products,function(product){
-			productFactory.updateOrder(product._id,$scope.purchaseOrder._id).then(function(res){
+			productFactory.updateOrder(product.productID,$scope.purchaseOrder._id).then(function(res){
 					result.push(res);
 				},function(error){
 					err=true;
@@ -575,7 +629,7 @@ app.controller('productCtrl',['$scope','$rootScope','$state','$http','productFac
 		}
 		else{
 			$scope.sort.field=type;
-			$scope.sort.reverse=true;
+			$scope.sort.reverse=false;
 		}
 	};
 
@@ -626,7 +680,7 @@ app.controller('productCtrl',['$scope','$rootScope','$state','$http','productFac
 /* 11 */
 /***/ (function(module, exports) {
 
-app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams','productFactory','orderFactory','supplierFactory',function($scope,$rootScope,$state,$stateParams,productFactory,orderFactory,supplierFactory){
+app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams','productFactory','orderFactory','saleOrderFactory','supplierFactory',function($scope,$rootScope,$state,$stateParams,productFactory,orderFactory,saleOrderFactory,supplierFactory){
 
 	$scope.product;
 
@@ -635,6 +689,7 @@ app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams',
 	$scope.adjustReason='';
 	$scope.adjustDate='';
 	$scope.purchaseOrder=[];
+	$scope.sellHistory=[];
 
 	var init= function(){
 		$scope.getItem();
@@ -660,6 +715,7 @@ app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams',
 			.then(function(res){
 				$scope.product=res.data.data;
 				getOrder($scope.product.purchaseOrder);
+				getSaleOrder($scope.product.sellHistory);
 			},function(err){
 				alert('Cannot get product.\n Error message: '+ err.message);
 			});
@@ -696,7 +752,8 @@ app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams',
 
 	$scope.deleteItem=function(id){
 		var bool=window.confirm("The item will be deleted permanently. Do you want to proceed?");
-		if($scope.product.purchaseOrder.length>0)
+
+		if($scope.product.purchaseOrder.length>0 || $scope.product.sellHistory.length>0)
 		{
 			alert("Please delete all related order before delete product.");
 			return;
@@ -722,7 +779,7 @@ app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams',
 		$scope.purchaseOrder=[];
 		for(i in orders){
 			var tmp=orderFactory.getOrder(orders[i].orderID).then(function(res){
-				$scope.purchaseOrder.push(processOrder(res.data.data));
+				$scope.purchaseOrder.push(processOrder(res.data.data,false));
 			},function(err){
 				if(err){
 					alert("Cannot get orders of product!\n Error message: "+ err.message);
@@ -731,24 +788,39 @@ app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams',
 		}
 	}
 
-	function processOrder(order){
+	function getSaleOrder(orders){
+		$scope.saleOrder=[];
+		for(i in orders){
+			var tmp=saleOrderFactory.getOrder(orders[i].orderID).then(function(res){
+				$scope.sellHistory.push(processOrder(res.data.data,true));
+			},function(err){
+				if(err){
+					alert("Cannot get orders of product!\n Error message: "+ err.message);
+				}
+			});
+		}
+	}
+
+	function processOrder(order,isSale){
 		var ret={};
 		ret._id=order._id;
 		ret.name=order.name;
 		ret.createdAt=order.createdAt;
 		ret.amount=0;
 		angular.forEach(order.batch,function(product){
+			console.log(product);
 			if(product.productID==$scope.product._id){
 				ret.amount=product.amount;
 			}
 		});
-		if (order.isSolved==false){
-			ret.stat="Not Solved";
+		if(isSale==false){
+			if (order.isSolved==false){
+				ret.stat="Not Solved";
+			}
+			else {
+				ret.stat="Solved";
+			}
 		}
-		else {
-			ret.stat="Solved";
-		}
-
 		return ret;
 	}
 
@@ -768,6 +840,164 @@ app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams',
 
 /***/ }),
 /* 12 */
+/***/ (function(module, exports) {
+
+app.controller('reportCtrl',['$scope','$rootScope','$state','$stateParams','$http','reportFactory','productFactory','supplierFactory','suppliers',function($scope,$rootScope,$state,$stateParams,$http,reportFactory,productFactory,supplierFactory,suppliers){
+	
+	$scope.selectedReport='';
+
+	function init(){
+		document.getElementById("selectReportScreen").style.display='none';
+		$scope.selectedReport=$state.$current.name.split('.')[1];
+		if($scope.selectedReport!='inventory')
+			$scope.sdate=convertDate($stateParams.sdate).toDateString();
+
+		$scope.edate=convertDate($stateParams.edate).toDateString();
+
+		$scope.edatedate=convertDate($stateParams.edate);
+		$scope.sort={
+			field:'name',
+			reverse:false
+		}
+		if(!suppliers.hasOwnProperty("name")){
+			$scope.suppliers=suppliers.data;
+		}
+		getReport($scope.selectedReport);
+		$('.datepicker').pickadate({
+			selectMonths: true, // Creates a dropdown to control month
+			selectYears: 15 // Creates a dropdown of 15 years to control year
+		});
+		if($scope.selectedReport!='inventory')
+			document.getElementById('sdate').value=convertDate($stateParams.sdate).toDateString();
+		document.getElementById('edate').value=convertDate($stateParams.edate).toDateString();
+	}
+
+	$scope.setOrder=function(type){
+		console.log($scope.sort);
+		if($scope.sort.field==type){
+			$scope.sort.reverse=!$scope.sort.reverse
+		}
+		else{
+			$scope.sort.field=type;
+			$scope.sort.reverse=false;
+		}
+	}
+
+	function getReport(report){
+		if (report=='order'){
+			reportFactory.getOrder($stateParams.sdate,$stateParams.edate).then(function(data){
+				$scope.arr=data.data;
+			},function(err){
+				alert("Cannot get report data.\n Error messages: "+err.message);
+			})
+		}
+		else if(report=='sale'){
+			reportFactory.getSaleOrder($stateParams.sdate,$stateParams.edate).then(function(data){
+				$scope.arr=data.data;
+				console.log(data.data);
+			},function(err){
+				alert("Cannot get report data.\n Error messages: "+err.message);
+			})
+		}
+		else if (report=='inventory'){
+			productFactory.getAllProducts().then(function(data){
+				$scope.arr=data.data;
+			},function(err){
+				alert("Cannot get report data.\n Error messages: "+err.message)
+			})
+		}
+	}
+
+	$scope.getQuantity=function(changeHistory,isIn){
+		var ret=0;
+		if (isIn==true){
+
+			angular.forEach(changeHistory,function(change){
+				var date=new Date(change.date);
+				if(change.amount>0 && date<=$scope.edatedate){
+					ret+=change.amount;
+				}
+			})
+		}
+		else{
+			angular.forEach(changeHistory,function(change){
+				var date=new Date(change.date);
+				if(change.amount<0 && date<=$scope.edatedate){
+					ret+=change.amount;
+				}
+			})
+			ret=-ret;
+		}
+		return ret;
+	}
+
+	$scope.getRemaining=function(changeHistory){
+		var ret=0;
+		var lastChange=null;
+		angular.forEach(changeHistory,function(change){
+			var date=new Date(change.date);
+			if(date<=$scope.edatedate){
+				lastChange=change;
+			}
+		})
+		if (lastChange==null){
+			return ret;
+		}
+		else{
+			ret=lastChange.currentStock+lastChange.amount;
+			return ret;
+		}
+	}
+
+	function getSupplierName(id){
+		var sname='Supplier not exist anymore.';
+		angular.forEach($scope.suppliers, function(supplier) {
+			if (supplier._id == id)
+				sname=supplier.name;
+		});
+		return sname;
+	};
+
+	$scope.getSupplierName=getSupplierName;
+
+	function convertDate(date){
+		date=date.split('-')
+		date=new Date(date[2],date[1]-1,date[0])
+		return date
+	}
+	$scope.convertDate=function(date){
+		var dat=new Date(date);
+		return dat.toDateString();
+	}
+
+	$scope.getStatus=function(stat){
+		if(stat){
+			return "Solved";
+		}
+		else
+			return "Not Solved";
+	}
+
+	$scope.setDate=function(report){
+		if(report!='inventory'){
+			var sdate=new Date(document.getElementById('sdate').value);
+			var edate=new Date(document.getElementById('edate').value)
+			var sdate=sdate.getDate()+'-'+(sdate.getMonth()+1)+'-'+(sdate.getFullYear());
+			var edate=edate.getDate()+'-'+(edate.getMonth()+1)+'-'+(edate.getFullYear());
+			$state.go('report.'+report,{sdate:sdate,edate:edate});
+		}
+		else{
+			var edate=new Date(document.getElementById('edate').value)
+			var edate=edate.getDate()+'-'+(edate.getMonth()+1)+'-'+(edate.getFullYear());
+			$state.go('report.'+report,{edate:edate});
+		}
+		
+	}
+	init();
+}]);
+
+/***/ }),
+/* 13 */
 /***/ (function(module, exports) {
 
 app.controller('saleOrderCtrl',['$scope','$rootScope','$state','$http','$compile','saleOrderFactory','products',function($scope,$rootScope,$state,$http,$compile,saleOrderFactory,products){
@@ -802,7 +1032,7 @@ app.controller('saleOrderCtrl',['$scope','$rootScope','$state','$http','$compile
 		}
 		else{
 			$scope.sort.field=type;
-			$scope.sort.reverse=true;
+			$scope.sort.reverse=false;
 		}
 	}
 
@@ -882,7 +1112,7 @@ app.controller('saleOrderCtrl',['$scope','$rootScope','$state','$http','$compile
 }])
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 app.controller("saleOrderInfoCtrl",['$scope','$rootScope','$state','$stateParams','saleOrderFactory','productFactory','products',function($scope,$rootScope,$state,$stateParams,saleOrderFactory,productFactory,products){
@@ -981,7 +1211,9 @@ app.controller("saleOrderInfoCtrl",['$scope','$rootScope','$state','$stateParams
 		var result=[];
 		var errs=[];
 		angular.forEach(products,function(product){
-			productFactory.updateAmount(product.productID,product.amount*revert,reason)
+
+			var stock= getStock($scope.products,product.productID)
+			productFactory.updateAmount(product.productID,product.amount*revert,reason,stock)
 				.then(function(res){
 					result.push(res);
 				},function(error){
@@ -997,13 +1229,23 @@ app.controller("saleOrderInfoCtrl",['$scope','$rootScope','$state','$stateParams
 		}
 	}
 
+	function getStock(products,id){
+		var ret=0;
+		angular.forEach(products,function(product){
+			if (product._id==id){
+				ret= product.stock;
+			}
+		})
+		return ret;
+	}
+
 	function removeProductOrder(){
 		products=$scope.saleOrder.batch;
 		var err=false;
 		var result=[];
 		var errs=[];
 		angular.forEach(products,function(product){
-			productFactory.updateSaleOrder(product._id,$scope.saleOrder._id).then(function(res){
+			productFactory.updateSaleOrder(product.productID,$scope.saleOrder._id).then(function(res){
 					result.push(res);
 				},function(error){
 					err=true;
@@ -1021,7 +1263,7 @@ app.controller("saleOrderInfoCtrl",['$scope','$rootScope','$state','$stateParams
 }])
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports) {
 
 app.controller('supplierCtrl',['$scope','$rootScope','$state','$http','supplierFactory',function($scope,$rootScope,$state,$http,supplierFactory){
@@ -1051,7 +1293,7 @@ app.controller('supplierCtrl',['$scope','$rootScope','$state','$http','supplierF
 		}
 		else{
 			$scope.sort.field=type;
-			$scope.sort.reverse=true;
+			$scope.sort.reverse=false;
 		}
 	}
 	function getAllSuppliers(){
@@ -1099,7 +1341,7 @@ app.controller('supplierCtrl',['$scope','$rootScope','$state','$http','supplierF
 }])
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports) {
 
 app.controller("supplierInfoCtrl",['$scope','$rootScope','$state','$stateParams','supplierFactory','orderFactory',function($scope,$rootScope,$state,$stateParams,supplierFactory,orderFactory){
@@ -1213,7 +1455,7 @@ app.controller("supplierInfoCtrl",['$scope','$rootScope','$state','$stateParams'
 }])
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports) {
 
 app.directive('addOrder',['supplierFactory','orderFactory','selectedProductFactory',function(supplierFactory,orderFactory,selectedProductFactory){
@@ -1235,27 +1477,32 @@ app.directive('addOrder',['supplierFactory','orderFactory','selectedProductFacto
 
 			function getProductList(container){
 				var products=container[0].children;
-				var ret=[]
+				var ret=[];
+				var total=0;
 				angular.forEach(products,function(product){
 					if((product.children[1].children[0]).hasAttribute('productid'))
 					{
 						tmp={
 							productID:$(product.children[1].children[0]).attr('productID'),
-							amount:$(product.children[2].children[0]).text()
+							amount:$(product.children[2].children[0]).val()
 						};
+						total+=parseInt($(product.children[4].children[0]).text());
 						ret.push(tmp);
 					}
 				});
-				return ret;
+				return [ret,total];
 			}
 
 			$scope.addOrder = function(){
+				var batch=getProductList($('#order-product-list'))
 				newOrder={
 					name:$scope.name,
 					supplierName:$scope.selectSupplier._id,
-					batch:getProductList($('#order-product-list')),
+					batch:batch[0],
+					price:batch[1],
 					isSolved:$scope.isSolved,
 				};
+				console.log(newOrder);
 				orderFactory.addOrder(newOrder).then(function(response){
 					orderFactory.updateSupplier(response.data.data._id,$scope.selectSupplier._id);
 					$scope.getAllOrders();
@@ -1273,7 +1520,7 @@ app.directive('addOrder',['supplierFactory','orderFactory','selectedProductFacto
 }]);
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports) {
 
 app.directive('editOrder',function(){
@@ -1287,7 +1534,7 @@ app.directive('editOrder',function(){
 })
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports) {
 
 app.directive('addAdjust',function(){
@@ -1301,7 +1548,7 @@ app.directive('addAdjust',function(){
 })
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports) {
 
 app.directive('addProduct',['productFactory',function(productFactory){
@@ -1353,7 +1600,7 @@ app.directive('addProduct',['productFactory',function(productFactory){
 }])
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports) {
 
 app.directive('productEdit',function(){
@@ -1367,7 +1614,7 @@ app.directive('productEdit',function(){
 })
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports) {
 
 app.directive('newItem',['$compile','productFactory','selectedProductFactory',function($compile,productFactory,selectedProductFactory){
@@ -1449,7 +1696,7 @@ app.directive('newItem',['$compile','productFactory','selectedProductFactory',fu
 }]);
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports) {
 
 app.directive('addSupplier',['supplierFactory',function(supplierFactory){
@@ -1493,7 +1740,7 @@ app.directive('addSupplier',['supplierFactory',function(supplierFactory){
 }])
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports) {
 
 app.directive('supplierEdit',function(){
@@ -1507,7 +1754,7 @@ app.directive('supplierEdit',function(){
 })
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports) {
 
 app.directive('appContent',function(){
@@ -1518,7 +1765,7 @@ app.directive('appContent',function(){
 })
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports) {
 
 app.directive('detailContent',function(){
@@ -1530,7 +1777,7 @@ app.directive('detailContent',function(){
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports) {
 
 app.directive('headerBar',function(){
@@ -1542,7 +1789,29 @@ app.directive('headerBar',function(){
 
 
 /***/ }),
-/* 27 */
+/* 28 */
+/***/ (function(module, exports) {
+
+app.directive('selectReport',['$state',function($state){
+	return {
+		templateUrl:'../view/detailcontent/report/reportSelect.html',
+		replace:true,
+		link: function($scope,element,attrs){
+			$scope.selectReport=function(){
+				var currentDate=new Date();
+				var sdate='01-'+(currentDate.getMonth()+1)+'-'+(currentDate.getFullYear());
+				var lastDate=new Date(currentDate.getFullYear(),currentDate.getMonth()+1,0);
+				var edate=''+lastDate.getDate()+'-'+(currentDate.getMonth()+1)+'-'+(currentDate.getFullYear());
+				
+				$state.go('report.'+$scope.selectedReport,{sdate:sdate,edate:edate});
+			}
+
+		}
+	}
+}])
+
+/***/ }),
+/* 29 */
 /***/ (function(module, exports) {
 
 app.directive('addSaleOrder',['saleOrderFactory','productFactory','selectedProductFactory',function(saleOrderFactory,productFactory,selectedProductFactory){
@@ -1584,7 +1853,8 @@ app.directive('addSaleOrder',['saleOrderFactory','productFactory','selectedProdu
 				var result=[];
 				var errs=[];
 				angular.forEach(products,function(product){
-					productFactory.updateAmount(product.productID,product.amount*revert,reason)
+					var stock=getStock($scope.products,product.productID);
+					productFactory.updateAmount(product.productID,product.amount*revert,reason,stock)
 						.then(function(res){
 							result.push(res);
 						},function(error){
@@ -1598,6 +1868,16 @@ app.directive('addSaleOrder',['saleOrderFactory','productFactory','selectedProdu
 				else{
 					window.alert('Updated amount successfully!');
 				}
+			}
+
+			function getStock(products,id){
+				var ret=0;
+				angular.forEach(products,function(product){
+					if (product._id==id){
+						ret= product.stock;
+					}
+				})
+				return ret;
 			}
 
 			$scope.addOrder = function(){
@@ -1624,7 +1904,7 @@ app.directive('addSaleOrder',['saleOrderFactory','productFactory','selectedProdu
 }]);
 
 /***/ }),
-/* 28 */
+/* 30 */
 /***/ (function(module, exports) {
 
 app.directive('sideBar',function(){
@@ -1636,7 +1916,7 @@ app.directive('sideBar',function(){
 
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports) {
 
 app.directive('uiSrefActiveIf', ['$state', function($state) {
@@ -1660,7 +1940,7 @@ app.directive('uiSrefActiveIf', ['$state', function($state) {
 }])
 
 /***/ }),
-/* 30 */
+/* 32 */
 /***/ (function(module, exports) {
 
 app.factory('orderFactory',['$http',function($http){
@@ -1695,7 +1975,7 @@ app.factory('orderFactory',['$http',function($http){
 }])
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, exports) {
 
 app.factory('productFactory',['$http',function($http){
@@ -1722,8 +2002,9 @@ app.factory('productFactory',['$http',function($http){
 		return $http.delete(urlBase+'/'+id);
 	};
 
-	productFactory.updateAmount = function (id,amount,reason){
-		return $http.put(urlBase+'/amount/'+id,{amount:amount,reason:reason});
+	productFactory.updateAmount = function (id,amount,reason,stock){
+		console.log(stock);
+		return $http.put(urlBase+'/amount/'+id,{amount:amount,reason:reason,stock:stock});
 	}
 	
 	productFactory.updateOrder = function(id,orderID){
@@ -1737,7 +2018,26 @@ app.factory('productFactory',['$http',function($http){
 }])
 
 /***/ }),
-/* 32 */
+/* 34 */
+/***/ (function(module, exports) {
+
+app.factory('reportFactory',['$http',function($http){
+	var reportFactory={};
+	var urlBase='/api/reports/';
+
+	reportFactory.getOrder = function(sdate,edate){
+		return $http.get(urlBase+'order/'+sdate+'/'+edate);
+	};
+
+	reportFactory.getSaleOrder = function(sdate,edate){
+		return $http.get(urlBase+'saleOrder/'+sdate+'/'+edate);
+	};
+
+	return reportFactory;
+}])
+
+/***/ }),
+/* 35 */
 /***/ (function(module, exports) {
 
 app.factory('saleOrderFactory',['$http',function($http){
@@ -1769,7 +2069,7 @@ app.factory('saleOrderFactory',['$http',function($http){
 }])
 
 /***/ }),
-/* 33 */
+/* 36 */
 /***/ (function(module, exports) {
 
 app.factory('selectedProductFactory',[function(){
@@ -1806,7 +2106,7 @@ app.factory('selectedProductFactory',[function(){
 }]);
 
 /***/ }),
-/* 34 */
+/* 37 */
 /***/ (function(module, exports) {
 
 app.factory('supplierFactory',['$http',function($http){
@@ -1845,9 +2145,6 @@ app.factory('supplierFactory',['$http',function($http){
 }])
 
 /***/ }),
-/* 35 */,
-/* 36 */,
-/* 37 */,
 /* 38 */,
 /* 39 */,
 /* 40 */,
@@ -1858,7 +2155,10 @@ app.factory('supplierFactory',['$http',function($http){
 /* 45 */,
 /* 46 */,
 /* 47 */,
-/* 48 */
+/* 48 */,
+/* 49 */,
+/* 50 */,
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 angular = __webpack_require__(0);
@@ -1873,4 +2173,4 @@ __webpack_require__(3);
 
 
 /***/ })
-],[48]);
+],[51]);

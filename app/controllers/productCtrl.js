@@ -24,7 +24,7 @@ app.controller('productCtrl',['$scope','$rootScope','$state','$http','productFac
 		}
 		else{
 			$scope.sort.field=type;
-			$scope.sort.reverse=true;
+			$scope.sort.reverse=false;
 		}
 	};
 

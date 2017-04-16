@@ -138,8 +138,10 @@ app.controller("orderInfoCtrl",['$scope','$rootScope','$state','$stateParams','o
 		var err=false;
 		var result=[];
 		var errs=[];
+
 		angular.forEach(products,function(product){
-			productFactory.updateAmount(product.productID,product.amount*revert,reason)
+			var stock=getStock($scope.products,product.productID);
+			productFactory.updateAmount(product.productID,product.amount*revert,reason,stock)
 				.then(function(res){
 					result.push(res);
 				},function(error){
@@ -155,13 +157,23 @@ app.controller("orderInfoCtrl",['$scope','$rootScope','$state','$stateParams','o
 		}
 	}
 
+	function getStock(products,id){
+		var ret=0;
+		angular.forEach(products,function(product){
+			if (product._id==id){
+				ret= product.stock;
+			}
+		})
+		return ret;
+	}
+
 	function removeProductOrder(){
 		products=$scope.purchaseOrder.batch;
 		var err=false;
 		var result=[];
 		var errs=[];
 		angular.forEach(products,function(product){
-			productFactory.updateOrder(product._id,$scope.purchaseOrder._id).then(function(res){
+			productFactory.updateOrder(product.productID,$scope.purchaseOrder._id).then(function(res){
 					result.push(res);
 				},function(error){
 					err=true;

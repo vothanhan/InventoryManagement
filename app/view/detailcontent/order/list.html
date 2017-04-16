@@ -25,7 +25,9 @@
 				<span'>Created Date</span>
 			</div>
 		</div>
-		
+		<div ng-show="orders.length==0" style='text-align:center'>
+			<span>No order yet.</span>
+		</div>
 		<div class='listing-item' ng-repeat='order in orders|orderBy:sort.field:sort.reverse'>
 			<div class='order-container' ui-sref='order.info({orderID:order._id})'>
 				<div class='col s12' style='padding-left:0px;padding-right:0px'>

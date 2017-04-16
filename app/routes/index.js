@@ -4,6 +4,7 @@ app.config(function($stateProvider,$urlRouterProvider,$locationProvider){
 		url:'/dashboard',
 		template: '<h1>Hello World!!!</h1>'
 	});
+
 	$stateProvider.state('product',{
 		url:'/product',
 		template: '<div ui-view="itemlist" id="itemlist"></div><div ui-view="sideinfo" id="sideinfo" ></div>',
@@ -115,10 +116,48 @@ app.config(function($stateProvider,$urlRouterProvider,$locationProvider){
 				}
 			}
 		});
+
 	$stateProvider.state('report',{
 		url:'/report',
-		template: '<h1>Hello Report!!!</h1>'
+		templateUrl: '../view/detailcontent/report/index.html',
+		controller:function($scope,$state){
+			$scope.$on("$stateChangeStart",function(){
+				document.getElementById('selectReportScreen').style.display='';
+			})
+			var currentDate=new Date();
+			$scope.sdate='01-'+(currentDate.getMonth()+1)+'-'+(currentDate.getFullYear());
+			var lastDate=new Date(currentDate.getFullYear(),currentDate.getMonth()+1,0);
+			$scope.edate=''+lastDate.getDate()+'-'+(currentDate.getMonth()+1)+'-'+(currentDate.getFullYear());
+		}
+	}).state('report.sale',{
+		url:'/sale/{sdate}/{edate}',
+		templateUrl:'../view/detailcontent/report/saleReport.html',
+		controller:'reportCtrl',
+		resolve:{
+			suppliers: function(supplierFactory){
+					return supplierFactory.getAllSuppliers();
+				},
+		}
+	}).state('report.order',{
+		url:'/order/{sdate}/{edate}',
+		templateUrl:'../view/detailcontent/report/orderReport.html',
+		controller:'reportCtrl',
+		resolve:{
+			suppliers: function(supplierFactory){
+					return supplierFactory.getAllSuppliers();
+				},
+		}
+	}).state('report.inventory',{
+		url:'/inventory/{edate}',
+		templateUrl:'../view/detailcontent/report/inventoryReport.html',
+		controller:'reportCtrl',
+		resolve:{
+			suppliers: function(supplierFactory){
+					return supplierFactory.getAllSuppliers();
+				},
+		}
 	});
+
 	$stateProvider.state('supplier',{
 		url:'/supplier',
 		template: '<div ui-view="supplierlist" id="supplierlist"></div><div ui-view="sideinfo" id="sideinfo"></div>',

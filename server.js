@@ -57,6 +57,7 @@ require('./app/api/supplier')(router);
 require('./app/api/order')(router);
 require('./app/api/user')(router);
 require('./app/api/saleorder')(router);
+require('./app/api/report')(router);
 
 app.use(router);
 

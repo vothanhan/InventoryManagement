@@ -11,6 +11,7 @@ module.exports = mongoose.model('Product',{
 	changeHistory: [{
 		amount: Number,
 		reason: String,
+		currentStock:Number,
 		date: Date,
 	}],
 	purchaseOrder:[{

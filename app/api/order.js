@@ -1,6 +1,6 @@
 var Order= require('../models/order');
 var Supplier=require('../models/supplier');
-var Product= require('../models/product')
+var Product= require('../models/product');
 
 module.exports = function(exrouter){
 	//initialize Router
@@ -18,7 +18,8 @@ module.exports = function(exrouter){
 			name: req.body.name,
 			supplierName: req.body.supplierName,
 			batch: req.body.batch,
-			isSolved: req.body.isSolved
+			isSolved: req.body.isSolved,
+			price:req.body.price
 		});
 
 		var response={}
@@ -65,6 +66,7 @@ module.exports = function(exrouter){
 					data.supplierName=req.body.supplierName;
 					data.batch=req.body.batch;
 					data.isSolved=req.body.isSolved;
+					data.price=req.body.price;
 					data.save(function(err){
 						if (err){
 							response={"error":true,"data":err};

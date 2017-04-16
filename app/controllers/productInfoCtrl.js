@@ -1,4 +1,4 @@
-app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams','productFactory','orderFactory','supplierFactory',function($scope,$rootScope,$state,$stateParams,productFactory,orderFactory,supplierFactory){
+app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams','productFactory','orderFactory','saleOrderFactory','supplierFactory',function($scope,$rootScope,$state,$stateParams,productFactory,orderFactory,saleOrderFactory,supplierFactory){
 
 	$scope.product;
 
@@ -7,6 +7,7 @@ app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams',
 	$scope.adjustReason='';
 	$scope.adjustDate='';
 	$scope.purchaseOrder=[];
+	$scope.sellHistory=[];
 
 	var init= function(){
 		$scope.getItem();
@@ -32,6 +33,7 @@ app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams',
 			.then(function(res){
 				$scope.product=res.data.data;
 				getOrder($scope.product.purchaseOrder);
+				getSaleOrder($scope.product.sellHistory);
 			},function(err){
 				alert('Cannot get product.\n Error message: '+ err.message);
 			});
@@ -68,7 +70,8 @@ app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams',
 
 	$scope.deleteItem=function(id){
 		var bool=window.confirm("The item will be deleted permanently. Do you want to proceed?");
-		if($scope.product.purchaseOrder.length>0)
+
+		if($scope.product.purchaseOrder.length>0 || $scope.product.sellHistory.length>0)
 		{
 			alert("Please delete all related order before delete product.");
 			return;
@@ -94,7 +97,7 @@ app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams',
 		$scope.purchaseOrder=[];
 		for(i in orders){
 			var tmp=orderFactory.getOrder(orders[i].orderID).then(function(res){
-				$scope.purchaseOrder.push(processOrder(res.data.data));
+				$scope.purchaseOrder.push(processOrder(res.data.data,false));
 			},function(err){
 				if(err){
 					alert("Cannot get orders of product!\n Error message: "+ err.message);
@@ -103,24 +106,39 @@ app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams',
 		}
 	}
 
-	function processOrder(order){
+	function getSaleOrder(orders){
+		$scope.saleOrder=[];
+		for(i in orders){
+			var tmp=saleOrderFactory.getOrder(orders[i].orderID).then(function(res){
+				$scope.sellHistory.push(processOrder(res.data.data,true));
+			},function(err){
+				if(err){
+					alert("Cannot get orders of product!\n Error message: "+ err.message);
+				}
+			});
+		}
+	}
+
+	function processOrder(order,isSale){
 		var ret={};
 		ret._id=order._id;
 		ret.name=order.name;
 		ret.createdAt=order.createdAt;
 		ret.amount=0;
 		angular.forEach(order.batch,function(product){
+			console.log(product);
 			if(product.productID==$scope.product._id){
 				ret.amount=product.amount;
 			}
 		});
-		if (order.isSolved==false){
-			ret.stat="Not Solved";
+		if(isSale==false){
+			if (order.isSolved==false){
+				ret.stat="Not Solved";
+			}
+			else {
+				ret.stat="Solved";
+			}
 		}
-		else {
-			ret.stat="Solved";
-		}
-
 		return ret;
 	}
 

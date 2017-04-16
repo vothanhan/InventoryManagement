@@ -3,3 +3,4 @@ require('./supplierFactory');
 require('./orderFactory');
 require('./saleOrderFactory');
 require('./selectedProduct');
+require('./reportFactory');

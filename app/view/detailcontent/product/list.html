@@ -25,7 +25,9 @@
 				<span>In stock</span>
 			</div>
 		</div>
-		
+		<div ng-show="products.length==0" style='text-align:center'>
+			<span>No product yet.</span>
+		</div>
 		<div class='listing-item' ng-repeat='product in products|orderBy:sort.field:sort.reverse'>
 			<div class='product-container' ui-sref='product.info({productID:product._id})'>
 				<div>

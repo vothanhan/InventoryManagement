@@ -25,7 +25,7 @@ app.controller('supplierCtrl',['$scope','$rootScope','$state','$http','supplierF
 		}
 		else{
 			$scope.sort.field=type;
-			$scope.sort.reverse=true;
+			$scope.sort.reverse=false;
 		}
 	}
 	function getAllSuppliers(){
