@@ -5,15 +5,16 @@ webpackJsonp([0],[
 
 "use strict";
 
-__webpack_require__(10);
 __webpack_require__(11);
-__webpack_require__(15);
-__webpack_require__(16);
-__webpack_require__(8);
-__webpack_require__(9);
-__webpack_require__(13);
-__webpack_require__(14);
 __webpack_require__(12);
+__webpack_require__(16);
+__webpack_require__(17);
+__webpack_require__(9);
+__webpack_require__(10);
+__webpack_require__(14);
+__webpack_require__(15);
+__webpack_require__(13);
+__webpack_require__(8);
 
 /***/ }),
 /* 2 */
@@ -22,21 +23,22 @@ __webpack_require__(12);
 "use strict";
 
 
-__webpack_require__(27);
-__webpack_require__(25);
-__webpack_require__(30);
-__webpack_require__(26);
-__webpack_require__(31);
-__webpack_require__(20);
-__webpack_require__(19);
-__webpack_require__(22);
-__webpack_require__(21);
-__webpack_require__(23);
-__webpack_require__(24);
-__webpack_require__(17);
-__webpack_require__(18);
-__webpack_require__(29);
 __webpack_require__(28);
+__webpack_require__(26);
+__webpack_require__(32);
+__webpack_require__(27);
+__webpack_require__(33);
+__webpack_require__(21);
+__webpack_require__(20);
+__webpack_require__(23);
+__webpack_require__(22);
+__webpack_require__(24);
+__webpack_require__(25);
+__webpack_require__(18);
+__webpack_require__(19);
+__webpack_require__(30);
+__webpack_require__(29);
+__webpack_require__(31);
 
 
 
@@ -45,12 +47,12 @@ __webpack_require__(28);
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(33);
-__webpack_require__(37);
-__webpack_require__(32);
 __webpack_require__(35);
-__webpack_require__(36);
+__webpack_require__(39);
 __webpack_require__(34);
+__webpack_require__(37);
+__webpack_require__(38);
+__webpack_require__(36);
 
 
 /***/ }),
@@ -61,7 +63,19 @@ app.config(function($stateProvider,$urlRouterProvider,$locationProvider){
 
 	$stateProvider.state('dashboard',{
 		url:'/dashboard',
-		template: '<h1>Hello World!!!</h1>'
+		templateUrl: '../view/detailcontent/dashboard/index.html',
+		controller:'dashboardCtrl',
+		resolve:{
+				orders: function(orderFactory){
+					return orderFactory.getAllOrders();
+				},
+				products: function(productFactory){
+					return productFactory.getAllProducts();
+				},
+				saleOrders: function(saleOrderFactory){
+					return saleOrderFactory.getAllOrders();
+				}
+			}
 	});
 
 	$stateProvider.state('product',{
@@ -259,6 +273,109 @@ app.config(function($stateProvider,$urlRouterProvider,$locationProvider){
 /* 8 */
 /***/ (function(module, exports) {
 
+app.controller('dashboardCtrl',['$scope','$state','$stateParams','reportFactory','orders','products','saleOrders',function($scope,$state,$stateParams,reportFactory,orders,products,saleOrders){
+
+	$scope.productSale={};
+	$scope.productSaleArray=[];
+
+	function init(){
+		var currentDate=new Date();
+		$scope.sdate='01-'+(currentDate.getMonth()+1)+'-'+(currentDate.getFullYear());
+		var lastDate=new Date(currentDate.getFullYear(),currentDate.getMonth()+1,0);
+		$scope.edate=''+lastDate.getDate()+'-'+(currentDate.getMonth()+1)+'-'+(currentDate.getFullYear());
+
+		prepareData();
+		getTopsale();
+		getPurchaseOrder();
+	}
+
+	function prepareData(){
+		if(!orders.hasOwnProperty("name")){
+			$scope.orders=orders.data;
+		}
+		if(!products.hasOwnProperty("name")){
+			$scope.products=products.data;
+		}
+		if(!saleOrders.hasOwnProperty("name")){
+			$scope.saleOrders=saleOrders.data;
+		}
+
+		getBelowRestock();
+		$scope.productCount=$scope.products.length;
+
+	}
+
+	function getBelowRestock(){
+		var count=0;
+		angular.forEach($scope.products,function(product){
+			if (product.stock<product.restockAmount){
+				count+=1;
+			}
+		})
+		$scope.belowRestock=count;
+	}
+
+
+
+	function getTopsale(){
+		angular.forEach($scope.products,function(product){
+			$scope.productSale[product._id]=0
+		})
+		
+		reportFactory.getSaleOrder($scope.sdate,$scope.edate).then(function(data){
+			$scope.saleCount=data.data.length;
+			$scope.saleAmount=0;
+			angular.forEach(data.data,function(order){
+				$scope.saleAmount+=order.price;
+				angular.forEach(order.batch,function(product){
+					$scope.productSale[product.productID]+=product.amount;
+				})
+			})
+			angular.forEach($scope.products,function(product){
+				$scope.productSaleArray.push({productID:product._id,sale:$scope.productSale[product._id]});
+			})
+			$scope.productSaleArray.sort(function(a,b){
+				return b.sale-a.sale;
+			})
+		},function(err){
+			alert("Cannot get sale orders.\nError message: "+err.message);
+		})
+	}
+
+	function getPurchaseOrder(){
+		reportFactory.getOrder($scope.sdate,$scope.edate).then(function(data){
+			$scope.orderCount=data.data.length;
+			$scope.resolvedCount=0;
+			$scope.purchaseAmount=0;
+			angular.forEach(data.data,function(order){
+				if(order.isSolved){
+					$scope.purchaseAmount+=order.price;
+					$scope.resolvedCount+=1;
+				}
+				
+			})
+		},function(err){
+			alert("Cannot get purchase orders.\nError message: "+err.message);
+		})
+	}
+
+	$scope.getProductName=function(id){
+		ret=''
+		angular.forEach($scope.products,function(product){
+			if(product._id==id){
+				ret=product.name;
+			}
+		})
+		return ret;
+	}
+
+	init();
+}])
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
 app.controller('orderCtrl',['$scope','$rootScope','$state','$http','$compile','orderFactory','supplierFactory','suppliers','products',function($scope,$rootScope,$state,$http,$compile,orderFactory,supplierFactory,suppliers,products){
 	var ctrl=this;
 	var orders=[];
@@ -323,15 +440,6 @@ app.controller('orderCtrl',['$scope','$rootScope','$state','$http','$compile','o
 
 	$scope.convertDate=convertDate;
 
-	function getAllSuppliers(){
-		supplierFactory.getAllSuppliers()
-			.then(function(response){
-				$scope.suppliers=response.data;
-			},function(error){
-				$scope.status='Unable to load suppliers. Message:'+error.message;
-			});
-	};
-	$scope.getAllSuppliers=getAllSuppliers
 	
 	function getSupplierName(id){
 		var sname='A';
@@ -348,6 +456,14 @@ app.controller('orderCtrl',['$scope','$rootScope','$state','$http','$compile','o
 		orderFactory.getAllOrders()
 			.then(function(response){
 				$scope.orders=response.data;
+				angular.forEach($scope.orders,function(order){
+					var sname='A';
+					angular.forEach($scope.suppliers, function(supplier) {
+						if (supplier._id == order.supplierName)
+							sname=supplier.name;
+					});
+					order.supplierName=sname;
+				})
 			},function(error){
 				$scope.status='Unable to load orders. Message:'+error.message;
 			});
@@ -374,27 +490,6 @@ app.controller('orderCtrl',['$scope','$rootScope','$state','$http','$compile','o
 		}
 	};
 
-	$scope.getOrder=function(id){
-		res={};
-		orderFactory.getOrder(id)
-			.then(function(response){
-				res.data=response.data;
-				res.err=false;
-			},function(error){
-				res.err=true;
-				res.txt=error.message;
-			});
-		return res;
-	}
-	$scope.deleteOrder = function(id,index){
-		orderFactory.deleteOrder(id)
-			.then(function(response){
-				$scope.orders.splice(index,1);
-				window.alert('Delete successfully ');
-			},function(error){
-				window.alert('Unable to delete order.\n Error message: '+error.message);
-			});
-	}
 
 	$scope.addProductLine = function(){
 		var container=$("#order-product-list");
@@ -404,7 +499,7 @@ app.controller('orderCtrl',['$scope','$rootScope','$state','$http','$compile','o
 }])
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports) {
 
 app.controller("orderInfoCtrl",['$scope','$rootScope','$state','$stateParams','orderFactory','supplierFactory','productFactory','suppliers','products',function($scope,$rootScope,$state,$stateParams,orderFactory,supplierFactory,productFactory,suppliers,products){
@@ -550,7 +645,7 @@ app.controller("orderInfoCtrl",['$scope','$rootScope','$state','$stateParams','o
 
 		angular.forEach(products,function(product){
 			var stock=getStock($scope.products,product.productID);
-			productFactory.updateAmount(product.productID,product.amount*revert,reason,stock)
+			productFactory.updateAmount(product.productID,product.amount*revert,reason,stock,$scope.purchaseOrder._id)
 				.then(function(res){
 					result.push(res);
 				},function(error){
@@ -600,7 +695,7 @@ app.controller("orderInfoCtrl",['$scope','$rootScope','$state','$stateParams','o
 }])
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 app.controller('productCtrl',['$scope','$rootScope','$state','$http','productFactory',function($scope,$rootScope,$state,$http,productFactory){
@@ -677,7 +772,7 @@ app.controller('productCtrl',['$scope','$rootScope','$state','$http','productFac
 }])
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports) {
 
 app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams','productFactory','orderFactory','saleOrderFactory','supplierFactory',function($scope,$rootScope,$state,$stateParams,productFactory,orderFactory,saleOrderFactory,supplierFactory){
@@ -728,26 +823,18 @@ app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams',
 			},function(err){
 				alert("Cannot edit product.\n Error message: "+ err.message);
 			});
+
 	}
 
 	$scope.adjustStock= function(id){
-		productFactory.getProduct(id)
-			.then(function(res){
-				var tmp=res.data.data;
-				var adjustment={"amount":$scope.stockAdjustAmount,"reason":$scope.adjustReason,"date":$("#adjust-date").val()}
-				tmp.changeHistory.push(adjustment);
-				tmp.stock+=$scope.stockAdjustAmount;
-				productFactory.updateProduct(tmp)
-					.then(function(res){
-						window.alert("Adjust successfully.");
-						$scope.getItem();
-					},function(err){
-						alert("Cannot adjust product.\n Error message: "+ err.message);
-					});
-				
-			},function(err){
-				alert('Cannot get product.\n Error message: '+ err.message);
-			});
+		var adjustment={"amount":$scope.stockAdjustAmount,"reason":$scope.adjustReason,"date":$("#adjust-date").val()}
+		productFactory.updateAmount(id,$scope.stockAdjustAmount,$scope.adjustReason,$scope.product.stock,'')
+				.then(function(res){
+					window.alert("Edit successfully.");
+					$scope.getItem();
+				},function(error){
+					alert("Cannot add adjustment.\nError message: "+err.message);
+				});
 	}
 
 	$scope.deleteItem=function(id){
@@ -839,7 +926,7 @@ app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams',
 }])
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 app.controller('reportCtrl',['$scope','$rootScope','$state','$stateParams','$http','reportFactory','productFactory','supplierFactory','suppliers',function($scope,$rootScope,$state,$stateParams,$http,reportFactory,productFactory,supplierFactory,suppliers){
@@ -997,7 +1084,7 @@ app.controller('reportCtrl',['$scope','$rootScope','$state','$stateParams','$htt
 }]);
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 app.controller('saleOrderCtrl',['$scope','$rootScope','$state','$http','$compile','saleOrderFactory','products',function($scope,$rootScope,$state,$http,$compile,saleOrderFactory,products){
@@ -1112,7 +1199,7 @@ app.controller('saleOrderCtrl',['$scope','$rootScope','$state','$http','$compile
 }])
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports) {
 
 app.controller("saleOrderInfoCtrl",['$scope','$rootScope','$state','$stateParams','saleOrderFactory','productFactory','products',function($scope,$rootScope,$state,$stateParams,saleOrderFactory,productFactory,products){
@@ -1213,7 +1300,7 @@ app.controller("saleOrderInfoCtrl",['$scope','$rootScope','$state','$stateParams
 		angular.forEach(products,function(product){
 
 			var stock= getStock($scope.products,product.productID)
-			productFactory.updateAmount(product.productID,product.amount*revert,reason,stock)
+			productFactory.updateAmount(product.productID,product.amount*revert,reason,stock,$scope.saleOrder._id)
 				.then(function(res){
 					result.push(res);
 				},function(error){
@@ -1263,7 +1350,7 @@ app.controller("saleOrderInfoCtrl",['$scope','$rootScope','$state','$stateParams
 }])
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports) {
 
 app.controller('supplierCtrl',['$scope','$rootScope','$state','$http','supplierFactory',function($scope,$rootScope,$state,$http,supplierFactory){
@@ -1341,7 +1428,7 @@ app.controller('supplierCtrl',['$scope','$rootScope','$state','$http','supplierF
 }])
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports) {
 
 app.controller("supplierInfoCtrl",['$scope','$rootScope','$state','$stateParams','supplierFactory','orderFactory',function($scope,$rootScope,$state,$stateParams,supplierFactory,orderFactory){
@@ -1455,7 +1542,7 @@ app.controller("supplierInfoCtrl",['$scope','$rootScope','$state','$stateParams'
 }])
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports) {
 
 app.directive('addOrder',['supplierFactory','orderFactory','selectedProductFactory',function(supplierFactory,orderFactory,selectedProductFactory){
@@ -1520,7 +1607,7 @@ app.directive('addOrder',['supplierFactory','orderFactory','selectedProductFacto
 }]);
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports) {
 
 app.directive('editOrder',function(){
@@ -1534,7 +1621,7 @@ app.directive('editOrder',function(){
 })
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports) {
 
 app.directive('addAdjust',function(){
@@ -1548,7 +1635,7 @@ app.directive('addAdjust',function(){
 })
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports) {
 
 app.directive('addProduct',['productFactory',function(productFactory){
@@ -1600,7 +1687,7 @@ app.directive('addProduct',['productFactory',function(productFactory){
 }])
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports) {
 
 app.directive('productEdit',function(){
@@ -1614,7 +1701,7 @@ app.directive('productEdit',function(){
 })
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports) {
 
 app.directive('newItem',['$compile','productFactory','selectedProductFactory',function($compile,productFactory,selectedProductFactory){
@@ -1696,7 +1783,7 @@ app.directive('newItem',['$compile','productFactory','selectedProductFactory',fu
 }]);
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports) {
 
 app.directive('addSupplier',['supplierFactory',function(supplierFactory){
@@ -1740,7 +1827,7 @@ app.directive('addSupplier',['supplierFactory',function(supplierFactory){
 }])
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports) {
 
 app.directive('supplierEdit',function(){
@@ -1754,7 +1841,7 @@ app.directive('supplierEdit',function(){
 })
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports) {
 
 app.directive('appContent',function(){
@@ -1765,7 +1852,7 @@ app.directive('appContent',function(){
 })
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports) {
 
 app.directive('detailContent',function(){
@@ -1777,7 +1864,7 @@ app.directive('detailContent',function(){
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports) {
 
 app.directive('headerBar',function(){
@@ -1789,7 +1876,7 @@ app.directive('headerBar',function(){
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports) {
 
 app.directive('selectReport',['$state',function($state){
@@ -1811,7 +1898,7 @@ app.directive('selectReport',['$state',function($state){
 }])
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports) {
 
 app.directive('addSaleOrder',['saleOrderFactory','productFactory','selectedProductFactory',function(saleOrderFactory,productFactory,selectedProductFactory){
@@ -1848,13 +1935,13 @@ app.directive('addSaleOrder',['saleOrderFactory','productFactory','selectedProdu
 				return [ret,price];
 			}
 
-			function updateProductAmount(reason,revert,products){
+			function updateProductAmount(reason,revert,products,orderID){
 				var err=false;
 				var result=[];
 				var errs=[];
 				angular.forEach(products,function(product){
 					var stock=getStock($scope.products,product.productID);
-					productFactory.updateAmount(product.productID,product.amount*revert,reason,stock)
+					productFactory.updateAmount(product.productID,product.amount*revert,reason,stock,orderID)
 						.then(function(res){
 							result.push(res);
 						},function(error){
@@ -1887,9 +1974,11 @@ app.directive('addSaleOrder',['saleOrderFactory','productFactory','selectedProdu
 					batch:tmp[0],
 					price:tmp[1]
 				};
-				updateProductAmount("Sale Order",-1,newOrder.batch);
+				
 				saleOrderFactory.addOrder(newOrder).then(function(response){
 					$scope.getAllOrders();
+					console.log(response.data.data._id)
+					updateProductAmount("Sale Order",-1,newOrder.batch,response.data.data._id);
 					initiateScope();
 					window.alert('Add '+ $scope.name +' successfully');
 					//$scope.orders.push(response.data)
@@ -1904,7 +1993,35 @@ app.directive('addSaleOrder',['saleOrderFactory','productFactory','selectedProdu
 }]);
 
 /***/ }),
-/* 30 */
+/* 31 */
+/***/ (function(module, exports) {
+
+app.directive('searchForm',[function(){
+	return{
+		templateUrl:"../view/detailcontent/searchForm.html",
+		replace:true,
+		link:function($scope,element,attr){
+			$scope.filterString='';
+			$scope.checkFilter=function(item){
+
+				var relevant=false;
+				for(var att in item){
+					if (item.hasOwnProperty(att)){
+						if(typeof(item[att])=='string' || typeof(item[att])=='number'){
+							if(String(item[att]).toLowerCase().indexOf($scope.filterString.toLowerCase())!=-1){
+								relevant=true;
+							}
+						}
+					}
+				}
+				return relevant;
+			}
+		}
+	}
+}])
+
+/***/ }),
+/* 32 */
 /***/ (function(module, exports) {
 
 app.directive('sideBar',function(){
@@ -1916,7 +2033,7 @@ app.directive('sideBar',function(){
 
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, exports) {
 
 app.directive('uiSrefActiveIf', ['$state', function($state) {
@@ -1940,7 +2057,7 @@ app.directive('uiSrefActiveIf', ['$state', function($state) {
 }])
 
 /***/ }),
-/* 32 */
+/* 34 */
 /***/ (function(module, exports) {
 
 app.factory('orderFactory',['$http',function($http){
@@ -1975,7 +2092,7 @@ app.factory('orderFactory',['$http',function($http){
 }])
 
 /***/ }),
-/* 33 */
+/* 35 */
 /***/ (function(module, exports) {
 
 app.factory('productFactory',['$http',function($http){
@@ -2002,9 +2119,8 @@ app.factory('productFactory',['$http',function($http){
 		return $http.delete(urlBase+'/'+id);
 	};
 
-	productFactory.updateAmount = function (id,amount,reason,stock){
-		console.log(stock);
-		return $http.put(urlBase+'/amount/'+id,{amount:amount,reason:reason,stock:stock});
+	productFactory.updateAmount = function (id,amount,reason,stock,orderID){
+		return $http.put(urlBase+'/amount/'+id,{amount:amount,reason:reason,stock:stock,orderID:orderID});
 	}
 	
 	productFactory.updateOrder = function(id,orderID){
@@ -2018,7 +2134,7 @@ app.factory('productFactory',['$http',function($http){
 }])
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(module, exports) {
 
 app.factory('reportFactory',['$http',function($http){
@@ -2037,7 +2153,7 @@ app.factory('reportFactory',['$http',function($http){
 }])
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, exports) {
 
 app.factory('saleOrderFactory',['$http',function($http){
@@ -2069,7 +2185,7 @@ app.factory('saleOrderFactory',['$http',function($http){
 }])
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports) {
 
 app.factory('selectedProductFactory',[function(){
@@ -2106,7 +2222,7 @@ app.factory('selectedProductFactory',[function(){
 }]);
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports) {
 
 app.factory('supplierFactory',['$http',function($http){
@@ -2145,8 +2261,6 @@ app.factory('supplierFactory',['$http',function($http){
 }])
 
 /***/ }),
-/* 38 */,
-/* 39 */,
 /* 40 */,
 /* 41 */,
 /* 42 */,
@@ -2158,7 +2272,9 @@ app.factory('supplierFactory',['$http',function($http){
 /* 48 */,
 /* 49 */,
 /* 50 */,
-/* 51 */
+/* 51 */,
+/* 52 */,
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 angular = __webpack_require__(0);
@@ -2173,4 +2289,4 @@ __webpack_require__(3);
 
 
 /***/ })
-],[51]);
+],[53]);

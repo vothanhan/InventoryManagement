@@ -62,15 +62,6 @@ app.controller('orderCtrl',['$scope','$rootScope','$state','$http','$compile','o
 
 	$scope.convertDate=convertDate;
 
-	function getAllSuppliers(){
-		supplierFactory.getAllSuppliers()
-			.then(function(response){
-				$scope.suppliers=response.data;
-			},function(error){
-				$scope.status='Unable to load suppliers. Message:'+error.message;
-			});
-	};
-	$scope.getAllSuppliers=getAllSuppliers
 	
 	function getSupplierName(id){
 		var sname='A';
@@ -87,6 +78,14 @@ app.controller('orderCtrl',['$scope','$rootScope','$state','$http','$compile','o
 		orderFactory.getAllOrders()
 			.then(function(response){
 				$scope.orders=response.data;
+				angular.forEach($scope.orders,function(order){
+					var sname='A';
+					angular.forEach($scope.suppliers, function(supplier) {
+						if (supplier._id == order.supplierName)
+							sname=supplier.name;
+					});
+					order.supplierName=sname;
+				})
 			},function(error){
 				$scope.status='Unable to load orders. Message:'+error.message;
 			});
@@ -113,27 +112,6 @@ app.controller('orderCtrl',['$scope','$rootScope','$state','$http','$compile','o
 		}
 	};
 
-	$scope.getOrder=function(id){
-		res={};
-		orderFactory.getOrder(id)
-			.then(function(response){
-				res.data=response.data;
-				res.err=false;
-			},function(error){
-				res.err=true;
-				res.txt=error.message;
-			});
-		return res;
-	}
-	$scope.deleteOrder = function(id,index){
-		orderFactory.deleteOrder(id)
-			.then(function(response){
-				$scope.orders.splice(index,1);
-				window.alert('Delete successfully ');
-			},function(error){
-				window.alert('Unable to delete order.\n Error message: '+error.message);
-			});
-	}
 
 	$scope.addProductLine = function(){
 		var container=$("#order-product-list");

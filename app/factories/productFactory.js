@@ -22,9 +22,8 @@ app.factory('productFactory',['$http',function($http){
 		return $http.delete(urlBase+'/'+id);
 	};
 
-	productFactory.updateAmount = function (id,amount,reason,stock){
-		console.log(stock);
-		return $http.put(urlBase+'/amount/'+id,{amount:amount,reason:reason,stock:stock});
+	productFactory.updateAmount = function (id,amount,reason,stock,orderID){
+		return $http.put(urlBase+'/amount/'+id,{amount:amount,reason:reason,stock:stock,orderID:orderID});
 	}
 	
 	productFactory.updateOrder = function(id,orderID){

@@ -7,6 +7,9 @@
 			<option value="itemType">Type</option>
 			<option value="stock">Stock</option>
 		</select>
+		<div class='col s5' ng-show='state=="product.list"'>
+			<search-form></search-form>
+		</div>
 		<input type="checkbox" data-ng-model="sort.reverse"/>
 	</div>
 	<add-product></add-product>
@@ -28,7 +31,7 @@
 		<div ng-show="products.length==0" style='text-align:center'>
 			<span>No product yet.</span>
 		</div>
-		<div class='listing-item' ng-repeat='product in products|orderBy:sort.field:sort.reverse'>
+		<div class='listing-item' ng-repeat='product in products|orderBy:sort.field:sort.reverse' ng-show='checkFilter(product)'>
 			<div class='product-container' ui-sref='product.info({productID:product._id})'>
 				<div>
 					<div ng-class='{col:true,s4:state=="product.list",s12:state=="product.info",cell:true,"have-border-top":state=="product.info"&&$index==0}' style='text-align:left'>
@@ -41,6 +44,7 @@
 						<span>{{product.itemType}}</span>
 					</div>
 					<div class='col s2 cell' style='text-align:right' ng-show="state=='product.list'">
+						<i class="fa fa-exclamation-triangle" ng-show="product.stock<=product.restockAmount" title='Remaining amount below restock level' aria-hidden="true"></i>
 						<span>{{product.stock}}</span>
 					</div>
 					<div class='col s1 cell' ng-show="state=='product.list'">

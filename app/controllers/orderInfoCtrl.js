@@ -141,7 +141,7 @@ app.controller("orderInfoCtrl",['$scope','$rootScope','$state','$stateParams','o
 
 		angular.forEach(products,function(product){
 			var stock=getStock($scope.products,product.productID);
-			productFactory.updateAmount(product.productID,product.amount*revert,reason,stock)
+			productFactory.updateAmount(product.productID,product.amount*revert,reason,stock,$scope.purchaseOrder._id)
 				.then(function(res){
 					result.push(res);
 				},function(error){

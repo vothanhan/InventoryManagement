@@ -46,26 +46,18 @@ app.controller("productInfoCtrl",['$scope','$rootScope','$state','$stateParams',
 			},function(err){
 				alert("Cannot edit product.\n Error message: "+ err.message);
 			});
+
 	}
 
 	$scope.adjustStock= function(id){
-		productFactory.getProduct(id)
-			.then(function(res){
-				var tmp=res.data.data;
-				var adjustment={"amount":$scope.stockAdjustAmount,"reason":$scope.adjustReason,"date":$("#adjust-date").val()}
-				tmp.changeHistory.push(adjustment);
-				tmp.stock+=$scope.stockAdjustAmount;
-				productFactory.updateProduct(tmp)
-					.then(function(res){
-						window.alert("Adjust successfully.");
-						$scope.getItem();
-					},function(err){
-						alert("Cannot adjust product.\n Error message: "+ err.message);
-					});
-				
-			},function(err){
-				alert('Cannot get product.\n Error message: '+ err.message);
-			});
+		var adjustment={"amount":$scope.stockAdjustAmount,"reason":$scope.adjustReason,"date":$("#adjust-date").val()}
+		productFactory.updateAmount(id,$scope.stockAdjustAmount,$scope.adjustReason,$scope.product.stock,'')
+				.then(function(res){
+					window.alert("Edit successfully.");
+					$scope.getItem();
+				},function(error){
+					alert("Cannot add adjustment.\nError message: "+err.message);
+				});
 	}
 
 	$scope.deleteItem=function(id){

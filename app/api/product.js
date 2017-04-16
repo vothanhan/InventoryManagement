@@ -133,7 +133,7 @@ module.exports = function(exrouter){
 	router.route("/api/items/amount/:id").put(function(req,res){
 		response={};
 		Product.findByIdAndUpdate(req.params.id,
-			{$push:{changeHistory:{amount:req.body.amount,reason:req.body.reason,date:new Date(),currentStock:req.body.stock}},$inc:
+			{$push:{changeHistory:{amount:req.body.amount,reason:req.body.reason,date:new Date(),currentStock:req.body.stock,orderID:req.body.orderID}},$inc:
 				{stock:req.body.amount}},
 			{new:true},function(err,model){
 				if(err){
@@ -149,7 +149,7 @@ module.exports = function(exrouter){
 
 	router.route("/api/items/order/:id").put(function(req,res){
 		response={};
-		Product.update({_id:req.params.id},{$pull:{purchaseOrder:{orderID:req.body.orderID}}},{new:true},function(err,model){
+		Product.update({_id:req.params.id},{$pull:{purchaseOrder:{orderID:req.body.orderID}},$pull:{changeHistory:{orderID:req.body.orderID}}},{new:true},function(err,model){
 				if(err){
 					console.log(err);
 					response={'error':true,'data':err};
@@ -163,7 +163,7 @@ module.exports = function(exrouter){
 
 	router.route("/api/items/saleorder/:id").put(function(req,res){
 		response={};
-		Product.update({_id:req.params.id},{$pull:{sellHistory:{orderID:req.body.orderID}}},{new:true},function(err,model){
+		Product.update({_id:req.params.id},{$pull:{sellHistory:{orderID:req.body.orderID}},$pull:{changeHistory:{orderID:req.body.orderID}}},{new:true},function(err,model){
 				if(err){
 					console.log(err);
 					response={'error':true,'data':err};

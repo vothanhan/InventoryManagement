@@ -6,6 +6,9 @@
 			<option value="name">Name</option>
 			<option value="isSolved">Is Solved</option>
 		</select>
+		<div class='col s5' ng-show='state=="saleorder.list"'>
+			<search-form></search-form>
+		</div>
 		<input type="checkbox" data-ng-model="sort.reverse"/>
 	</div>
 	<add-sale-order></add-sale-order>
@@ -24,7 +27,7 @@
 		<div ng-show="orders.length==0" style='text-align:center'>
 			<span>No order yet.</span>
 		</div>
-		<div class='listing-item' ng-repeat='order in orders|orderBy:sort.field:sort.reverse'>
+		<div class='listing-item' ng-repeat='order in orders|orderBy:sort.field:sort.reverse' ng-show='checkFilter(order)'>
 			<div class='order-container' ui-sref='saleorder.info({orderID:order._id})'>
 				<div class='col s12' style='padding-left:0px;padding-right:0px'>
 					<div ng-class='{col:true,s5:state=="saleorder.list",s12:state=="saleorder.info",cell:true,"have-border-top":state=="saleorder.info"&&$index==0}' style='text-align:left'>

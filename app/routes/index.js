@@ -2,7 +2,19 @@ app.config(function($stateProvider,$urlRouterProvider,$locationProvider){
 
 	$stateProvider.state('dashboard',{
 		url:'/dashboard',
-		template: '<h1>Hello World!!!</h1>'
+		templateUrl: '../view/detailcontent/dashboard/index.html',
+		controller:'dashboardCtrl',
+		resolve:{
+				orders: function(orderFactory){
+					return orderFactory.getAllOrders();
+				},
+				products: function(productFactory){
+					return productFactory.getAllProducts();
+				},
+				saleOrders: function(saleOrderFactory){
+					return saleOrderFactory.getAllOrders();
+				}
+			}
 	});
 
 	$stateProvider.state('product',{

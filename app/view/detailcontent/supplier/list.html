@@ -5,6 +5,9 @@
 			<option value="" disabled selected>Order by</option>
 			<option value="name">Name</option>
 		</select>
+		<div class='col s5' ng-show='state=="supplier.list"'>
+			<search-form></search-form>
+		</div>
 		<input type="checkbox" data-ng-model="sort.reverse"/>
 	</div>
 	<add-supplier></add-supplier>
@@ -24,7 +27,7 @@
 			</div>	
 		</div>
 		
-		<div class='listing-item' ng-repeat='supplier in suppliers|orderBy:sort.field:sort.reverse'>
+		<div class='listing-item' ng-repeat='supplier in suppliers|orderBy:sort.field:sort.reverse' ng-show='checkFilter(supplier)'>
 			<div class='supplier-container' ui-sref='supplier.info({supplierID:supplier._id})'>
 				<div class='col s12' style='padding-left:0px;padding-right:0px'>
 					<div ng-class='{col:true,s4:state=="supplier.list",s12:state=="supplier.info",cell:true,"have-border-top":state=="supplier.info"&&$index==0}' style='text-align:left'>

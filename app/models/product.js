@@ -13,6 +13,7 @@ module.exports = mongoose.model('Product',{
 		reason: String,
 		currentStock:Number,
 		date: Date,
+		orderID:String
 	}],
 	purchaseOrder:[{
 		orderID:String

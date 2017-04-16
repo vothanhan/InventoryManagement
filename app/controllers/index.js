@@ -8,3 +8,4 @@ require('./orderInfoCtrl');
 require('./saleOrderCtrl');
 require('./saleOrderInfoCtrl');
 require('./reportCtrl');
+require('./dashboardCtrl');

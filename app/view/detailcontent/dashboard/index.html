@@ -1,0 +1,67 @@
+<div class='dashboard-window' class='col s12'>
+	<div class='col s12' style='text-align: center;margin-bottom:4rem'>
+		<h3>Welcome to Inventory</h3> 
+	</div>
+	<div class='col s12' style='padding-left:3rem'>
+		<div class='col s5 dashboard-item-1' >
+			<div class='row dashboard-title'>
+				<h4>Product</h4>
+			</div>
+			<div class='row'>
+				<label class='col s6 dashboard-label'>Low Stock Products</label>
+				<span class='col s6 dashboard-info'>{{belowRestock}}</span>
+			</div>
+			<div class='row'>
+				<label class='col s6 dashboard-label'>All Products</label>
+				<span class='col s6 dashboard-info'>{{productCount}}</span>
+			</div>
+		</div>
+		<div class='col s6 dashboard-item-1' style='margin-left:5rem'>
+			<div class='row dashboard-title' >
+				<h4>Top Sale Products</h4>
+			</div>
+			<div class='row' style='display:inline-flex'>
+				<div class='top-sale-item' ng-repeat='item in productSaleArray'>
+					<div class='top-sale-name'>
+						<span>{{getProductName(item.productID)}}</span>
+					</div>
+					<div class='top-sale-number'>
+						<span>{{item.sale}}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class='col s12' style='padding-top:2rem;padding-left:3rem'>
+		<div class='col s5 dashboard-item-2' >
+			<div class='row dashboard-title'>
+				<h4>Sale Order</h4>
+			</div>
+			<div class='row'>
+				<label class='col s6 dashboard-label'>Total Sales Orders</label>
+				<span class='col s6 dashboard-info'>{{saleCount}}</span>
+			</div>
+			<div class='row'>
+				<label class='col s6 dashboard-label'>Total value</label>
+				<span class='col s6 dashboard-info'>{{saleAmount}} VND</span>
+			</div>
+		</div>
+		<div class='col s6 dashboard-item-2' style='margin-left:5rem'>
+			<div class='row dashboard-title' >
+				<h4>Purchase Order</h4>
+			</div>
+			<div class='row'>
+				<label class='col s6 dashboard-label'>Total Purchases Orders</label>
+				<span class='col s6 dashboard-info'>{{orderCount}}</span>
+			</div>
+			<div class='row'>
+				<label class='col s6 dashboard-label'>Solved Orders</label>
+				<span class='col s6 dashboard-info'>{{resolvedCount}}</span>
+			</div>
+			<div class='row'>
+				<label class='col s6 dashboard-label'>Total value</label>
+				<span class='col s6 dashboard-info'>{{purchaseAmount}} VND</span>
+			</div>
+		</div>
+	</div>
+</div>

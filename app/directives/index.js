@@ -15,5 +15,6 @@ require("./Order/addOrder");
 require("./Order/editOrder");
 require("./saleOrder/addOrder");
 require("./report/selectReport");
+require("./searchForm");
 
 

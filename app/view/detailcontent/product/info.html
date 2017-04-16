@@ -55,6 +55,7 @@
 			<div class='col s6'>
 				<div class='row'>
 					<label class='col s6' style='font-size:0.9rem'>In Stock</label>
+					<i class="fa fa-exclamation-triangle" ng-show="product.stock<=product.restockAmount" title='Remaining amount below restock level' aria-hidden="true"></i>
 					<span class='col s6'>{{product.stock}}</span>
 				</div>
 				<div class='row'>

@@ -31,6 +31,12 @@
 	height:100%;
 }
 
+.dashboard-window{
+	padding:1rem 2rem 0 2rem;
+	height:100%;
+	min-width:80rem;
+}
+
 @media (max-width:992px){
 	.detail_content{
 		width:100%!important;
